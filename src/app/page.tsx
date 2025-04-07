@@ -5,7 +5,7 @@ import { usePrivy } from '@privy-io/react-auth'
 import { useEffect, useState } from 'react'
 
 export default function Home() {
-  const { ready, authenticated, user } = usePrivy()
+  const { authenticated, user } = usePrivy()
   const [userIdFromDB, setUserIdFromDB] = useState<string | null>(null)
 
   useEffect(() => {

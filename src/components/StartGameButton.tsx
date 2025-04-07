@@ -10,7 +10,7 @@ type StartGameButtonProps = {
 }
 
 export default function StartGameButton({ userId }: StartGameButtonProps) {
-    const [gameId, setGameId] = useState<string | null>(null)
+    //const [gameId, setGameId] = useState<string | null>(null)
     const [cards, setCards] = useState<number[] | null>(null)
     const [loading, setLoading] = useState(false)
     const [turn, setTurn] = useState(1)
@@ -24,8 +24,8 @@ export default function StartGameButton({ userId }: StartGameButtonProps) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ mode: 'solo', player1Id: userId }),
         })
-        const data = await res.json()
-        setGameId(data.game.id)
+        await res.json()
+        //setGameId(data.game.id)
 
         const shuffled = generateShuffledBoard()
         setCards(shuffled)
