@@ -1,35 +1,32 @@
 'use client'
 
-import StartGameButton from '@/components/StartGameButton'
 import { usePrivy } from '@privy-io/react-auth'
-import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import styles from './page.module.css'
 
-export default function Home() {
-  const { authenticated, user } = usePrivy()
-  const [userIdFromDB, setUserIdFromDB] = useState<string | null>(null)
+export default function LandingPage() {
+  const { login, ready, authenticated } = usePrivy()
+  const router = useRouter()
 
   useEffect(() => {
-    if (authenticated && user?.wallet?.address && user?.id) {
-      const wallet = user.wallet.address
-      const privyId = user.id
-      const username = user.email?.address?.split('@')[0] ?? 'anon'
-
-      fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ wallet, privyId, username }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          setUserIdFromDB(data.user.id)
-        })
-        .catch((err) => console.error('[Login] Error:', err))
+    if (authenticated) {
+      router.push('/play')
     }
-  }, [authenticated, user])
+  }, [authenticated, router])
 
   return (
-    <main className="flex flex-col items-center justify-center p-4">
-      {userIdFromDB && <StartGameButton userId={userIdFromDB} />}
+    <main className={styles.landingWrapper}>
+      <h1 className={styles.landingTitle}>Lil Pudgy Big Memory</h1>
+      <p className={styles.landingSubtitle}>A memory card game for pudgy brains</p>
+      <button
+        className={styles.landingButton}
+        onClick={() => {
+          if (ready) login()
+        }}
+      >
+        Play Now
+      </button>
     </main>
   )
 }

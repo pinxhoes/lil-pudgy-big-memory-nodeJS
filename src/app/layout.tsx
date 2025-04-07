@@ -1,6 +1,6 @@
-import Header from '@/components/Header'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import ClientLayout from './layout.client'
 import { PrivyProviderWrapper } from './providers/PrivyProviderWrapper'
 import { ThemeProvider } from './providers/ThemeProvider'
 
@@ -18,11 +18,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-background text-foreground min-h-screen`}>
+      <body className={`${inter.className}`}>
         <PrivyProviderWrapper>
           <ThemeProvider>
-            <Header />
-            {children}
+            <ClientLayout>{children}</ClientLayout>
           </ThemeProvider>
         </PrivyProviderWrapper>
       </body>

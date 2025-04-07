@@ -1,0 +1,43 @@
+.landingWrapper {
+  background-color: #f5fdff; /* Blizzard Blue */
+  color: #00142d; /* Oxford Blue */
+  font-family: "Menco", sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.landingTitle {
+  background-color: #fff;
+  width: 100%;
+  padding: 1.5rem;
+  font-family: "Wedges", sans-serif;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #00142d;
+}
+
+.landingSubtitle {
+  font-size: 1.5rem;
+  color: #00142d;
+  margin-top: 2rem;
+}
+
+.landingButton {
+  background-color: #00142d;
+  color: #fff;
+  font-size: 1.125rem;
+  padding: 0.75rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 2rem;
+}
+
+.landingButton:hover {
+  background-color: #003366;
+}

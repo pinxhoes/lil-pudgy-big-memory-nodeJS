@@ -53,8 +53,8 @@ export default function GameBoard({ cards }: GameBoardProps) {
                         onClick={() => handleFlip(i)}
                         className="aspect-square w-full rounded-full border border-white flex items-center justify-center font-bold text-xl cursor-pointer transition-transform transform hover:scale-105"
                         style={{
-                            backgroundColor: isFlipped ? '#111827' : '#10b981',
-                            color: isFlipped ? '#fff' : 'transparent',
+                            backgroundColor: isFlipped ? '#f5fdff' : '#00142d',
+                            color: isFlipped ? '#00142d' : 'transparent',
                         }}
                     >
                         {value}

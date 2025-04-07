@@ -1,11 +1,17 @@
 @import "tailwindcss/preflight";
 @import "tailwindcss/utilities";
 
+@font-face {
+  font-family: "Wedges";
+  src: url("/fonts/Wedges.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 html {
   font-family: system-ui, sans-serif;
 }
 
 body {
-  background-color: #000; /* fallback */
   color: #fff;
 }

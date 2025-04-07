@@ -1,9 +1,11 @@
 'use client'
 
+import styles from '@/app/page.module.css'
 import { generateShuffledBoard } from '@/lib/gameLogic'
 import { useState } from 'react'
 import GameBoard from './GameBoard/GameBoard'
 import GameStatus from './GameStatus'
+
 
 type StartGameButtonProps = {
     userId: string
@@ -39,7 +41,7 @@ export default function StartGameButton({ userId }: StartGameButtonProps) {
             <button
                 onClick={startGame}
                 disabled={loading}
-                className="rounded-lg bg-blue-600 text-white px-4 py-2 font-semibold hover:bg-blue-700 disabled:opacity-50"
+                className={styles.landingButton}
             >
                 {loading ? 'Starting...' : 'Start Game'}
             </button>
