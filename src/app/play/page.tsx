@@ -9,7 +9,11 @@ export default function Home() {
     const [userIdFromDB, setUserIdFromDB] = useState<string | null>(null)
 
     useEffect(() => {
-        if (authenticated && user?.wallet?.address && user?.id) {
+        if (
+            authenticated &&
+            user?.id &&
+            user?.wallet?.address
+        ) {
             const wallet = user.wallet.address
             const privyId = user.id
             const username = user.email?.address?.split('@')[0] ?? 'anon'
