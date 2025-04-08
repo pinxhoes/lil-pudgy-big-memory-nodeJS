@@ -2,22 +2,23 @@
 
 import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
 import styles from './page.module.css'
 
 export default function LandingPage() {
-  const { login, ready, authenticated } = usePrivy()
+  const { login, authenticated } = usePrivy()
   const router = useRouter()
 
   // If already authenticated, go to /play immediately
-  useEffect(() => {
-    if (authenticated) {
-      router.push('/play')
-    }
-  }, [authenticated, router])
+  // useEffect(() => {
+  //   if (authenticated) {
+  //     router.push('/play')
+  //   }
+  // }, [authenticated, router])
 
   const handlePlayNow = () => {
-    if (ready) {
+    if (authenticated) {
+      router.push('/play')
+    } else {
       login()
     }
   }

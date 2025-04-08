@@ -1,11 +1,12 @@
 import type { NextConfig } from 'next'
 
+const isDev = process.env.NODE_ENV === 'development'
+
 const nextConfig: NextConfig = {
   async headers() {
     return [
-      // Cache static assets aggressively
       {
-        source: '/(fonts|images|_next/static|favicon\\.ico|.*\\.css|.*\\.js)', // static files
+        source: '/(fonts|images|_next/static|favicon\\.ico|.*\\.css|.*\\.js)',
         headers: [
           {
             key: 'Cache-Control',
@@ -13,9 +14,8 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      // Cache dynamic pages minimally
       {
-        source: '/(.*)', // everything else
+        source: '/(.*)',
         headers: [
           {
             key: 'Content-Security-Policy',
@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
               default-src 'self';
               connect-src 'self' https://auth.privy.io https://explorer-api.walletconnect.com;
               frame-src https://*.privy.io;
-              script-src 'self' 'unsafe-inline';
+              script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ''};
               style-src 'self' 'unsafe-inline';
             `.replace(/\s{2,}/g, ' ').trim(),
           },
