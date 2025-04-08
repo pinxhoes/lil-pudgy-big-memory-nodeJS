@@ -1,5 +1,6 @@
 'use client'
 
+import Spinner from '@/components/Spinner'
 import StartGameButton from '@/components/StartGameButton'
 import { usePrivy } from '@privy-io/react-auth'
 import { useEffect, useState } from 'react'
@@ -33,7 +34,13 @@ export default function Home() {
 
     return (
         <main className="flex flex-col items-center justify-center p-4 min-h-screen bg-[#80abff]">
-            {userIdFromDB && <StartGameButton userId={userIdFromDB} />}
+            {userIdFromDB ? (
+                <StartGameButton userId={userIdFromDB} />
+            ) : (
+                <div className="flex flex-col items-center mt-8 text-[#00142d]">
+                    <Spinner />
+                </div>
+            )}
         </main>
     )
 }
