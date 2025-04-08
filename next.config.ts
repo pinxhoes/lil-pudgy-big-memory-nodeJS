@@ -25,6 +25,7 @@ const nextConfig: NextConfig = {
               frame-src https://*.privy.io;
               script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ''};
               style-src 'self' 'unsafe-inline';
+              img-src 'self' https://cdn.privy.io data:;
             `.replace(/\s{2,}/g, ' ').trim(),
           },
           {
