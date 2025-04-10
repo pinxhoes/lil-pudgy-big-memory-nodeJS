@@ -1,13 +1,16 @@
 'use client'
 
-import Spinner from '@/components/Spinner'
-import StartGameButton from '@/components/StartGameButton'
-import { usePrivy } from '@privy-io/react-auth'
-import { useEffect, useState } from 'react'
+import styles from '@/app/page.module.css';
+import Spinner from '@/components/Spinner';
+import StartGameButton from '@/components/StartGameButton';
+import { usePrivy } from '@privy-io/react-auth';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
-    const { authenticated, user } = usePrivy()
-    const [userIdFromDB, setUserIdFromDB] = useState<string | null>(null)
+    const { authenticated, user } = usePrivy();
+    const [userIdFromDB, setUserIdFromDB] = useState<string | null>(null);
+    const [mode, setMode] = useState<'solo' | 'multiplayer' | null>(null);
+
 
     useEffect(() => {
         if (
@@ -30,16 +33,37 @@ export default function Home() {
                 })
                 .catch((err) => console.error('[Login] Error:', err))
         }
-    }, [authenticated, user])
+    }, [authenticated, user]);
+
+    if (!userIdFromDB) {
+        return (
+            <main className="flex flex-col items-center justify-center p-4 min-h-screen bg-[#80abff]">
+                <Spinner />
+            </main>
+        )
+    }
 
     return (
-        <main className="flex flex-col items-center justify-center p-4 min-h-screen bg-[#80abff]">
-            {userIdFromDB ? (
+        <main className="flex flex-col items-center justify-center p-4 min-h-screen bg-[#80abff] space-y-4">
+            {!mode ? (
+                <>
+                    <button
+                        className={styles.landingButton}
+                        onClick={() => setMode('solo')}
+                    >
+                        VS Stoopid
+                    </button>
+                    <button
+                        className={styles.landingButton}
+                        onClick={() => setMode('multiplayer')}
+                    >
+                        VS Friend
+                    </button>
+                </>
+            ) : mode === 'solo' ? (
                 <StartGameButton userId={userIdFromDB} />
             ) : (
-                <div className="flex flex-col items-center mt-8 text-[#00142d]">
-                    <Spinner />
-                </div>
+                <div className="text-[#00142d]">Multiplayer coming soon!</div>
             )}
         </main>
     )

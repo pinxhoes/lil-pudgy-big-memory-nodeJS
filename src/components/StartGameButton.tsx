@@ -3,8 +3,7 @@
 import styles from '@/app/page.module.css'
 import { generateShuffledBoard } from '@/lib/gameLogic'
 import { useState } from 'react'
-import GameBoard from './GameBoard/GameBoard'
-import GameStatus from './GameStatus'
+import GameBoard from './GameBoard/GameBoardSolo'
 
 
 type StartGameButtonProps = {
@@ -15,8 +14,6 @@ export default function StartGameButton({ userId }: StartGameButtonProps) {
     //const [gameId, setGameId] = useState<string | null>(null)
     const [cards, setCards] = useState<number[] | null>(null)
     const [loading, setLoading] = useState(false)
-    const [turn, setTurn] = useState(1)
-    const [score, setScore] = useState(0)
 
     const startGame = async () => {
         setLoading(true)
@@ -27,12 +24,9 @@ export default function StartGameButton({ userId }: StartGameButtonProps) {
             body: JSON.stringify({ mode: 'solo', player1Id: userId }),
         })
         await res.json()
-        //setGameId(data.game.id)
 
         const shuffled = generateShuffledBoard()
         setCards(shuffled)
-        setTurn(1)
-        setScore(0)
         setLoading(false)
     }
 
@@ -46,12 +40,7 @@ export default function StartGameButton({ userId }: StartGameButtonProps) {
                 {loading ? 'Starting...' : 'Start Game'}
             </button>
 
-            {cards && (
-                <>
-                    <GameStatus currentPlayer={1} score={score} turn={turn} />
-                    <GameBoard cards={cards} />
-                </>
-            )}
+            {cards && <GameBoard cards={cards} />}
         </div>
-    )
+    );
 }

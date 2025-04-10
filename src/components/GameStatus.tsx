@@ -1,16 +1,14 @@
-'use client'
+'use client';
 
 type GameStatusProps = {
-    currentPlayer: number
-    score: number
-    turn: number
-}
+    playerScore: number;
+    computerScore: number;
+};
 
-export default function GameStatus({ currentPlayer, score, turn }: GameStatusProps) {
+export default function GameStatus({ playerScore, computerScore }: GameStatusProps) {
     return (
-        <div className="text-center mt-4 space-y-2 text-white">
-            <div className="text-lg font-semibold"> Turn {turn}</div>
-            <div className="text-md font-medium"> Score Player {currentPlayer}: {score}</div>
+        <div className="text-center mt-4 space-y-2 text-white text-lg font-semibold">
+            Your score: {playerScore} | Stoopid score: {computerScore}
         </div>
-    )
+    );
 }
