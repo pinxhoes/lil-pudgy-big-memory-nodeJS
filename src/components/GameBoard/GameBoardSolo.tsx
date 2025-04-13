@@ -1,6 +1,7 @@
 'use client';
 
 import GameStatus from '@/components/GameStatus';
+import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 import './Card.css';
 
@@ -116,7 +117,15 @@ export default function GameBoardSolo({ cards }: GameBoardProps) {
                                 color: isFlipped ? '#fff' : 'transparent',
                             }}
                         >
-                            {value}
+                            {isFlipped && (
+                                <Image
+                                    src={`/cards/${value}.svg`}
+                                    alt={`penguin ${value}`}
+                                    width={100}
+                                    height={100}
+                                    className="w-[90%] h-[90%] object-contain"
+                                />
+                            )}
                         </div>
                     );
                 })}
