@@ -1,4 +1,5 @@
 import { Inter } from 'next/font/google'
+import { wedges } from './fonts'
 import './globals.css'
 import ClientLayout from './layout.client'
 import { PrivyProviderWrapper } from './providers/PrivyProviderWrapper'
@@ -17,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${wedges.variable}`}>
       <body className={`${inter.className}`}>
         <PrivyProviderWrapper>
           <ThemeProvider>
