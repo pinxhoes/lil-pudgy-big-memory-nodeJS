@@ -1,6 +1,5 @@
 'use client'
 
-import styles from '@/app/page.module.css';
 import Spinner from '@/components/Spinner';
 import StartGameButton from '@/components/StartGameButton';
 import { usePrivy } from '@privy-io/react-auth';
@@ -48,13 +47,13 @@ export default function Home() {
             {!mode ? (
                 <>
                     <button
-                        className={styles.landingButton}
+                        className="mt-6 font-wedges text-xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b] px-10 py-3 rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)] transition-transform duration-150 active:scale-95 hover:brightness-110 cursor-pointer"
                         onClick={() => setMode('solo')}
                     >
                         VS Stoopid
                     </button>
                     <button
-                        className={styles.landingButton}
+                        className="mt-6 font-wedges text-xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b] px-10 py-3 rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)] transition-transform duration-150 active:scale-95 hover:brightness-110 cursor-pointer"
                         onClick={() => setMode('multiplayer')}
                     >
                         VS Friend

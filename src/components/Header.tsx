@@ -20,7 +20,7 @@ export default function Header() {
         <header className="w-full h-20 bg-white text-[#00142d] flex justify-between items-center px-6 shadow-md">
             <Link
                 href="/"
-                className="text-2xl font-bold"
+                className="text-2xl font-bold text-[#00142d] no-underline"
                 style={{ fontFamily: 'Wedges, sans-serif' }}
             >
                 Lil Pudgy Big Memory
