@@ -1,40 +1,48 @@
 'use client'
 
-import Spinner from '@/components/Spinner';
-import StartGameButton from '@/components/StartGameButton';
-import { usePrivy } from '@privy-io/react-auth';
-import { useEffect, useState } from 'react';
+import Spinner from '@/components/Spinner'
+import StartGameButton from '@/components/StartGameButton'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useAccount } from 'wagmi'
 
-export default function Home() {
-    const { authenticated, user } = usePrivy();
-    const [userIdFromDB, setUserIdFromDB] = useState<string | null>(null);
-    const [mode, setMode] = useState<'solo' | 'multiplayer' | null>(null);
+export default function PlayPage() {
+    const { address, status } = useAccount()
+    const [userIdFromDB, setUserIdFromDB] = useState<string | null>(null)
+    const [mode, setMode] = useState<'solo' | 'multiplayer' | null>(null)
+    const router = useRouter()
 
-
+    // 🚨 Redirect if not connected
     useEffect(() => {
-        if (
-            authenticated &&
-            user?.id &&
-            user?.wallet?.address
-        ) {
-            const wallet = user.wallet.address
-            const privyId = user.id
-            const username = user.email?.address?.split('@')[0] ?? 'anon'
+        if (status === 'disconnected') {
+            console.log('[Redirect] User is disconnected, redirecting...')
+            router.push('/')
+        }
+    }, [status, router])
 
+    // 👤 Pull user info from localStorage and send to backend
+    useEffect(() => {
+        if (status === 'connected' && address) {
             fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ wallet, privyId, username }),
+                body: JSON.stringify({
+                    wallet: address,
+                    privyId: address, // use address as fallback identifier
+                    username: `user-${address.slice(2, 8)}`,
+                }),
             })
                 .then((res) => res.json())
                 .then((data) => {
+                    console.log('[Login] Success:', data)
                     setUserIdFromDB(data.user.id)
                 })
                 .catch((err) => console.error('[Login] Error:', err))
         }
-    }, [authenticated, user]);
+    }, [status, address])
 
-    if (!userIdFromDB) {
+    // 🔄 Still loading user from DB
+    if (status !== 'connected' || !userIdFromDB) {
         return (
             <main className="flex flex-col items-center justify-center p-4 min-h-screen bg-[#80abff]">
                 <Spinner />

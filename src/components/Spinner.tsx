@@ -10,6 +10,7 @@ export default function Spinner() {
                 height={48}
                 className="animate-spin"
             />
+            <p className="text-white mt-4">Status: {status}</p>
         </div>
     )
 }

@@ -1,20 +1,26 @@
 'use client'
 
 import { useAbstractPrivyLogin } from '@abstract-foundation/agw-react/privy';
+import { usePrivy } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useAccount } from 'wagmi';
 
 export default function LandingPage() {
   const { login } = useAbstractPrivyLogin();
-  const { isConnected } = useAccount();
+  const { authenticated } = usePrivy();
+  const { status } = useAccount();
   const router = useRouter();
 
   useEffect(() => {
-    if (isConnected) {
-      router.push('/play')
+    if (authenticated && status === 'connected') {
+      const timer = setTimeout(() => {
+        router.push('/play')
+      }, 300)
+
+      return () => clearTimeout(timer)
     }
-  }, [isConnected, router])
+  }, [authenticated, status, router])
 
 
   return (

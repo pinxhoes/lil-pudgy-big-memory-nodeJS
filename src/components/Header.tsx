@@ -13,6 +13,7 @@ export default function Header() {
 
     const handleLogout = async () => {
         await logout()
+        localStorage.removeItem('privy:user') // cleanup
         router.push('/')
     }
 
