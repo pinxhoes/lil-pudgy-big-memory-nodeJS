@@ -1,20 +1,21 @@
 'use client'
 
-import { useAbstractPrivyLogin } from '@abstract-foundation/agw-react/privy'
-import { usePrivy } from '@privy-io/react-auth'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useAbstractPrivyLogin } from '@abstract-foundation/agw-react/privy';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useAccount } from 'wagmi';
 
 export default function LandingPage() {
-  const { login } = useAbstractPrivyLogin()
-  const { authenticated } = usePrivy()
-  const router = useRouter()
+  const { login } = useAbstractPrivyLogin();
+  const { isConnected } = useAccount();
+  const router = useRouter();
 
   useEffect(() => {
-    if (authenticated) {
+    if (isConnected) {
       router.push('/play')
     }
-  }, [authenticated, router])
+  }, [isConnected, router])
+
 
   return (
     <main className="bg-[#f5fdff] min-h-screen flex flex-col items-center text-center px-4 text-[#00142d]">
