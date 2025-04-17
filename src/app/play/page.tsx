@@ -1,12 +1,13 @@
 'use client'
+export const dynamic = 'force-dynamic';
 
-import Spinner from '@/components/Spinner'
-import StartGameButton from '@/components/StartGameButton'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { useAccount } from 'wagmi'
+import Spinner from '@/components/Spinner';
+import StartGameButton from '@/components/StartGameButton';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useAccount } from 'wagmi';
 
-export default function PlayPage() {
+export default function Home() {
     const { address, status } = useAccount()
     const [userIdFromDB, setUserIdFromDB] = useState<string | null>(null)
     const [mode, setMode] = useState<'solo' | 'multiplayer' | null>(null)
