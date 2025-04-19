@@ -1,8 +1,9 @@
 'use client'
-export const dynamic = 'force-dynamic';
+//export const dynamic = 'force-dynamic';
 
 import Spinner from '@/components/Spinner';
 import StartGameButton from '@/components/StartGameButton';
+import { usePrivy } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
@@ -12,6 +13,7 @@ export default function Home() {
     const [userIdFromDB, setUserIdFromDB] = useState<string | null>(null)
     const [mode, setMode] = useState<'solo' | 'multiplayer' | null>(null)
     const router = useRouter()
+    const { logout } = usePrivy()
 
     // 🚨 Redirect if not connected
     useEffect(() => {
@@ -41,6 +43,18 @@ export default function Home() {
                 .catch((err) => console.error('[Login] Error:', err))
         }
     }, [status, address])
+
+    useEffect(() => {
+        if (status === 'connected' && !mode) {
+            const timer = setTimeout(() => {
+                console.log('[AutoLogout] No game started, logging out...')
+                logout()
+                router.push('/')
+            }, 15 * 60 * 1000) // 15 minutes
+
+            return () => clearTimeout(timer)
+        }
+    }, [status, mode, logout, router])
 
     // 🔄 Still loading user from DB
     if (status !== 'connected' || !userIdFromDB) {
