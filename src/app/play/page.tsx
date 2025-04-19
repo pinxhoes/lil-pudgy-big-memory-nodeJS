@@ -1,29 +1,26 @@
-'use client'
-//export const dynamic = 'force-dynamic';
+'use client';
 
 import Spinner from '@/components/Spinner';
 import StartGameButton from '@/components/StartGameButton';
-import { usePrivy } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 
 export default function Home() {
-    const { address, status } = useAccount()
-    const [userIdFromDB, setUserIdFromDB] = useState<string | null>(null)
-    const [mode, setMode] = useState<'solo' | 'multiplayer' | null>(null)
-    const router = useRouter()
-    const { logout } = usePrivy()
+    const { address, status } = useAccount();
+    const [userIdFromDB, setUserIdFromDB] = useState<string | null>(null);
+    const [mode, setMode] = useState<'solo' | 'multiplayer' | null>(null);
+    const router = useRouter();
 
     // 🚨 Redirect if not connected
     useEffect(() => {
         if (status === 'disconnected') {
-            console.log('[Redirect] User is disconnected, redirecting...')
-            router.push('/')
+            console.log('[Redirect] User is disconnected, redirecting...');
+            router.push('/');
         }
-    }, [status, router])
+    }, [status, router]);
 
-    // 👤 Pull user info from localStorage and send to backend
+    // 👤 Pull user info and send to backend
     useEffect(() => {
         if (status === 'connected' && address) {
             fetch('/api/auth/login', {
@@ -37,24 +34,12 @@ export default function Home() {
             })
                 .then((res) => res.json())
                 .then((data) => {
-                    console.log('[Login] Success:', data)
-                    setUserIdFromDB(data.user.id)
+                    console.log('[Login] Success:', data);
+                    setUserIdFromDB(data.user.id);
                 })
-                .catch((err) => console.error('[Login] Error:', err))
+                .catch((err) => console.error('[Login] Error:', err));
         }
-    }, [status, address])
-
-    useEffect(() => {
-        if (status === 'connected' && !mode) {
-            const timer = setTimeout(() => {
-                console.log('[AutoLogout] No game started, logging out...')
-                logout()
-                router.push('/')
-            }, 15 * 60 * 1000) // 15 minutes
-
-            return () => clearTimeout(timer)
-        }
-    }, [status, mode, logout, router])
+    }, [status, address]);
 
     // 🔄 Still loading user from DB
     if (status !== 'connected' || !userIdFromDB) {
@@ -62,7 +47,7 @@ export default function Home() {
             <main className="flex flex-col items-center justify-center p-4 min-h-screen bg-[#80abff]">
                 <Spinner />
             </main>
-        )
+        );
     }
 
     return (
@@ -88,5 +73,5 @@ export default function Home() {
                 <div className="text-[#00142d]">Multiplayer coming soon!</div>
             )}
         </main>
-    )
+    );
 }
