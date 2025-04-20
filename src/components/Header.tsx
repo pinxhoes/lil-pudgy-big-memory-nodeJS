@@ -1,19 +1,16 @@
 'use client'
 
-import { usePrivy } from '@privy-io/react-auth'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 
 export default function Header() {
-    const { user, logout, ready } = usePrivy()
     const pathname = usePathname()
     const router = useRouter()
 
-    if (pathname === '/' || !ready) return null
+    // ⛔️ Hide only on landing page
+    if (pathname === '/') return null
 
-    const handleLogout = async () => {
-        await logout()
-        localStorage.removeItem('privy:user') // cleanup
+    const handleLogout = () => {
         router.push('/')
     }
 
@@ -27,30 +24,25 @@ export default function Header() {
                 Lil Pudgy Big Memory
             </Link>
 
-            {user?.wallet?.address && (
-                <div className="flex items-center space-x-4">
-                    <div className="w-8 h-8 text-white flex items-center justify-center font-bold">
-                        👤
-                    </div>
-                    <span className="hidden sm:block text-[#00142d] font-mono truncate max-w-[140px]">
-                        {user.wallet.address}
-                    </span>
-                    <button
-                        onClick={handleLogout}
-                        style={{
-                            fontFamily: 'Wedges, sans-serif',
-                            backgroundColor: '#00142d',
-                            color: '#fff',
-                            padding: '0.5rem 1rem',
-                            borderRadius: '0.375rem',
-                            fontSize: '0.875rem',
-                            fontWeight: 'bold'
-                        }}
-                    >
-                        Logout
-                    </button>
-                </div>
-            )}
+            <div className="flex items-center space-x-4">
+                <span className="hidden sm:block text-[#00142d] font-mono truncate max-w-[140px]">
+                    guest
+                </span>
+                <button
+                    onClick={handleLogout}
+                    style={{
+                        fontFamily: 'Wedges, sans-serif',
+                        backgroundColor: '#00142d',
+                        color: '#fff',
+                        padding: '0.5rem 1rem',
+                        borderRadius: '0.375rem',
+                        fontSize: '0.875rem',
+                        fontWeight: 'bold'
+                    }}
+                >
+                    Logout
+                </button>
+            </div>
         </header>
     )
 }
