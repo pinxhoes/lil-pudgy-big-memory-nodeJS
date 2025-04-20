@@ -88,13 +88,13 @@ export default function GameBoardSolo({ cards }: GameBoardProps) {
         <>
             {!gameOver ? (
                 <>
-                    <div className="text-center text-white mt-4 text-lg">
+                    <div className="text-center text-white mt-10 text-lg">
                         {currentPlayer === 'human' ? 'Your turn 🧠' : 'Stoopid turn 🐧'}
                     </div>
                     <GameStatus playerScore={playerScore} computerScore={computerScore} />
                 </>
             ) : (
-                <div className="text-center text-white text-2xl mt-4">
+                <div className="text-center text-white text-2xl mt-10">
                     {playerScore > computerScore
                         ? 'You win! 🧠🎉'
                         : playerScore < computerScore
