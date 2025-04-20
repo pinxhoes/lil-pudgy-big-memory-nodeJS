@@ -1,17 +1,14 @@
-import type { Config } from 'tailwindcss'
+import type { Config } from 'tailwindcss';
 
 const config: Config = {
     darkMode: 'class',
-    content: [
-        './app/**/*.{ts,tsx}',
-        './components/**/*.{ts,tsx}',
-        './lib/**/*.{ts,tsx}',
-    ],
-    safelist: [
-        {
-            pattern: /bg-\[.*\]/,
-        },
-    ],
+    content: {
+        files: [
+            './app/**/*.{ts,tsx}',
+            './components/**/*.{ts,tsx}',
+            './lib/**/*.{ts,tsx}',
+        ],
+    },
     theme: {
         extend: {
             colors: {
@@ -46,6 +43,6 @@ const config: Config = {
         },
     },
     plugins: [],
-}
+};
 
-export default config
+export default config;
