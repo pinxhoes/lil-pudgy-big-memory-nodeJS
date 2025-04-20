@@ -7,6 +7,11 @@ const config: Config = {
         './components/**/*.{ts,tsx}',
         './lib/**/*.{ts,tsx}',
     ],
+    safelist: [
+        {
+            pattern: /bg-\[.*\]/,
+        },
+    ],
     theme: {
         extend: {
             colors: {
@@ -36,7 +41,7 @@ const config: Config = {
                 spin: 'spin 1s linear infinite',
             },
             fontFamily: {
-                wedges: ['Wedges', 'sans-serif'],
+                wedges: ['var(--font-wedges)', 'sans-serif'],
             },
         },
     },

@@ -6,11 +6,7 @@ export default function LandingPage() {
   const router = useRouter()
 
   return (
-    <main className="bg-[#f5fdff] min-h-screen flex flex-col items-center text-center px-4 text-[#00142d]">
-      <h1 className="w-full pt-6 pb-4 font-wedges text-3xl md:text-5xl font-bold">
-        Stoopid Game
-      </h1>
-
+    <main className="bg-[#80abff] min-h-screen flex flex-col items-center text-center px-4 text-[#00142d]">
       <div className="flex flex-col items-center justify-center flex-grow">
         <h1 className="font-wedges text-[4rem] md:text-[5.5rem]">
           Lil Pudgy Big Memory
@@ -19,8 +15,8 @@ export default function LandingPage() {
         <button
           onClick={() => router.push('/play')}
           className="mt-10 font-wedges text-xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
-            px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
-            transition-transform duration-150 active:scale-95 hover:brightness-110 cursor-pointer"
+            px-[2.5rem] py-[1rem] rounded-full shadow-[4px_38px_62px_0px_rgba(0,0,0,0.50)]
+            transition-transform duration-150 active:scale-95 hover:brightness-110 cursor-pointer "
         >
           Play Now
         </button>

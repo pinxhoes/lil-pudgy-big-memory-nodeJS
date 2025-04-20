@@ -1,4 +1,4 @@
-@tailwind utilities;
+@import "tailwindcss";
 
 @font-face {
   font-family: "Wedges";
@@ -10,10 +10,6 @@
 
 .font-wedges {
   font-family: var(--font-wedges), sans-serif;
-}
-
-html {
-  font-family: system-ui, sans-serif;
 }
 
 body.font-wedges {
