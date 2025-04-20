@@ -1,48 +1,61 @@
 'use client'
 
-import { generateShuffledBoard } from '@/lib/gameLogic'
-import { useState } from 'react'
-import GameBoard from './GameBoard/GameBoardSolo'
-
+import { useState } from 'react';
+import GameBoardSolo from './GameBoard/GameBoardSolo';
 
 type StartGameButtonProps = {
-    userId: string
-}
+    userId: string;
+    gridSize?: number;
+    columns?: number;
+};
 
-export default function StartGameButton({ userId }: StartGameButtonProps) {
-    //const [gameId, setGameId] = useState<string | null>(null)
-    const [cards, setCards] = useState<number[] | null>(null)
-    const [loading, setLoading] = useState(false)
+export default function StartGameButton({ userId, gridSize = 48, columns }: StartGameButtonProps) {
+    const [cards, setCards] = useState<number[] | null>(null);
+    const [gameKey, setGameKey] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     const startGame = async () => {
-        setLoading(true)
+        setLoading(true);
 
-        const res = await fetch('/api/game/create', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ mode: 'solo', player1Id: userId }),
-        })
-        await res.json()
+        try {
+            const res = await fetch('/api/game/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mode: 'solo', player1Id: userId, gridSize }),
+            });
 
-        const shuffled = generateShuffledBoard()
-        setCards(shuffled)
-        setLoading(false)
-    }
+            const data = await res.json();
+
+            if (!res.ok || !data.game || !data.game.deck) {
+                console.error('[StartGame] Invalid response:', data);
+                alert('Failed to start game. Please try again.');
+                setLoading(false);
+                return;
+            }
+
+            setCards(data.game.deck);
+            setGameKey(prev => prev + 1);
+        } catch (error) {
+            console.error('[StartGame] Error:', error);
+            alert('Something went wrong. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
-        <div className="p-4 flex flex-col items-center">
+        <div className="flex flex-col items-center justify-center p-4 min-h-screen bg-[#80abff] space-y-4">
             <button
                 onClick={startGame}
                 disabled={loading}
                 className="mt-10 font-wedges text-xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
-            px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
-            transition-transform duration-150 active:scale-95 hover:brightness-110 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-
+                px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
+                transition-transform duration-150 active:scale-95 hover:brightness-110 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
                 {loading ? 'Starting...' : 'Start Game'}
             </button>
 
-            {cards && <GameBoard cards={cards} />}
+            {cards && <GameBoardSolo key={gameKey} cards={cards} columns={columns} />}
         </div>
-    );
+    )
 }

@@ -7,9 +7,10 @@ import './Card.css';
 
 type GameBoardProps = {
     cards: number[];
+    columns?: number;
 };
 
-export default function GameBoardSolo({ cards }: GameBoardProps) {
+export default function GameBoardSolo({ cards, columns = 8 }: GameBoardProps) {
     const [flippedCards, setFlippedCards] = useState<number[]>([]);
     const [matchedCards, setMatchedCards] = useState<Set<number>>(new Set());
     const [disabled, setDisabled] = useState(false);
@@ -45,12 +46,10 @@ export default function GameBoardSolo({ cards }: GameBoardProps) {
                         setPlayerScore((prev) => prev + 1);
                         setFlippedCards([]);
                         setDisabled(false);
-                        // Stay on human turn
                     } else {
                         setComputerScore((prev) => prev + 1);
                         setFlippedCards([]);
                         setDisabled(false);
-                        // Repeat computer turn
                     }
                 } else {
                     setFlippedCards([]);
@@ -67,7 +66,6 @@ export default function GameBoardSolo({ cards }: GameBoardProps) {
         }
     }, [matchedCards, cards]);
 
-    // Computer turn logic
     useEffect(() => {
         if (currentPlayer === 'computer' && flippedCards.length === 0 && !disabled) {
             const available = cards
@@ -103,7 +101,12 @@ export default function GameBoardSolo({ cards }: GameBoardProps) {
                 </div>
             )}
 
-            <div className="grid grid-cols-8 gap-3 w-[90vw] max-w-[1000px] mx-auto mt-4">
+            <div
+                className={`grid gap-3 w-[90vw] max-w-[1000px] mx-auto mt-4`}
+                style={{
+                    gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+                }}
+            >
                 {cards.map((value, i) => {
                     const isFlipped = flippedCards.includes(i) || matchedCards.has(i);
 
