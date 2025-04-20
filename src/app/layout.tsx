@@ -1,9 +1,6 @@
-import { Inter } from 'next/font/google';
 import Head from 'next/head';
 import { wedges } from './fonts';
 import './globals.css';
-
-const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
   title: 'Memory Game',
@@ -19,8 +16,15 @@ export default function RootLayout({
     <html lang="en" className={`${wedges.variable}`}>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+          rel="preload"
+          href="/fonts/Wedges.ttf"
+          as="font"
+          type="font/ttf"
+          crossOrigin="anonymous"
+        />
       </Head>
-      <body className={`${inter.className}`}>
+      <body className="font-wedges">
         {children}
       </body>
     </html>

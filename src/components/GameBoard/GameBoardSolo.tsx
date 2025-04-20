@@ -87,7 +87,7 @@ export default function GameBoardSolo({ cards, columns = 8, cardSize = 60 }: Gam
         <>
             {!gameOver ? (
                 <>
-                    <div className="text-center text-white mt-10 text-lg">
+                    <div className="text-center text-white mt-10 text-3xl">
                         {currentPlayer === 'human' ? 'Your turn 🧠' : 'Stoopid turn 🐧'}
                     </div>
                     <GameStatus playerScore={playerScore} computerScore={computerScore} />

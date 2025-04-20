@@ -3,13 +3,19 @@
 @font-face {
   font-family: "Wedges";
   src: url("/fonts/Wedges.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
   font-display: swap;
 }
 
 .font-wedges {
-  font-family: "Wedges", sans-serif;
+  font-family: var(--font-wedges), sans-serif;
 }
 
 html {
   font-family: system-ui, sans-serif;
+}
+
+body.font-wedges {
+  font-family: "Wedges", sans-serif;
 }
