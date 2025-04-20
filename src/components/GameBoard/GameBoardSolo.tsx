@@ -8,9 +8,10 @@ import './Card.css';
 type GameBoardProps = {
     cards: number[];
     columns?: number;
+    cardSize?: number;
 };
 
-export default function GameBoardSolo({ cards, columns = 8 }: GameBoardProps) {
+export default function GameBoardSolo({ cards, columns = 8, cardSize = 60 }: GameBoardProps) {
     const [flippedCards, setFlippedCards] = useState<number[]>([]);
     const [matchedCards, setMatchedCards] = useState<Set<number>>(new Set());
     const [disabled, setDisabled] = useState(false);
@@ -114,13 +115,18 @@ export default function GameBoardSolo({ cards, columns = 8 }: GameBoardProps) {
                         <div
                             key={i}
                             onClick={() => handleFlip(i)}
-                            className="rounded-full bg-green-600 border border-white flex items-center justify-center text-white font-bold text-xl cursor-pointer aspect-square overflow-hidden"
+                            style={{
+                                width: `${cardSize}px`,
+                                height: `${cardSize}px`,
+                                borderRadius: '9999px',
+                            }}
+                            className="bg-green-600 border border-white flex items-center justify-center cursor-pointer aspect-square overflow-hidden"
                         >
                             <Image
                                 src={isFlipped ? `/cards/${value}.svg` : '/img/gameLogo.svg'}
                                 alt={isFlipped ? `penguin ${value}` : 'card back'}
-                                width={100}
-                                height={100}
+                                width={cardSize}
+                                height={cardSize}
                                 className="w-[90%] h-[90%] object-contain"
                             />
                         </div>

@@ -9,7 +9,7 @@ export default function Play() {
     const [mode, setMode] = useState<'solo' | 'multiplayer' | null>(null);
     const router = useRouter()
 
-    const userIdFromDB = 'guest'; // Static guest ID for now
+    const userIdFromDB = 'guest';
 
     return (
         <main className="flex flex-col items-center justify-center p-4 min-h-screen bg-[#80abff] space-y-4">
