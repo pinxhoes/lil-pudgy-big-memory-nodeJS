@@ -34,7 +34,10 @@ export default function StartGameButton({ userId }: StartGameButtonProps) {
             <button
                 onClick={startGame}
                 disabled={loading}
-                className="mt-6 font-wedges text-xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b] px-10 py-3 rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)] transition-transform duration-150 active:scale-95 hover:brightness-110 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                className="mt-10 font-wedges text-xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
+            px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
+            transition-transform duration-150 active:scale-95 hover:brightness-110 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+
             >
                 {loading ? 'Starting...' : 'Start Game'}
             </button>
