@@ -111,21 +111,15 @@ export default function GameBoardSolo({ cards }: GameBoardProps) {
                         <div
                             key={i}
                             onClick={() => handleFlip(i)}
-                            className="rounded-full bg-green-600 border border-white flex items-center justify-center text-white font-bold text-xl cursor-pointer aspect-square"
-                            style={{
-                                backgroundColor: isFlipped ? '#111' : '#10b981',
-                                color: isFlipped ? '#fff' : 'transparent',
-                            }}
+                            className="rounded-full bg-green-600 border border-white flex items-center justify-center text-white font-bold text-xl cursor-pointer aspect-square overflow-hidden"
                         >
-                            {isFlipped && (
-                                <Image
-                                    src={`/cards/${value}.svg`}
-                                    alt={`penguin ${value}`}
-                                    width={100}
-                                    height={100}
-                                    className="w-[90%] h-[90%] object-contain"
-                                />
-                            )}
+                            <Image
+                                src={isFlipped ? `/cards/${value}.svg` : '/img/gameLogo.svg'}
+                                alt={isFlipped ? `penguin ${value}` : 'card back'}
+                                width={100}
+                                height={100}
+                                className="w-[90%] h-[90%] object-contain"
+                            />
                         </div>
                     );
                 })}
