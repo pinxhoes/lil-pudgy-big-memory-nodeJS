@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import GameBoardSolo from './GameBoard/GameBoardSolo';
 
 type StartGameButtonProps = {
@@ -14,32 +14,12 @@ export default function StartGameButton({
     userId,
     gridSize = 48,
     columns = 8,
-    rows = 6,
+
 }: StartGameButtonProps) {
     const [cards, setCards] = useState<number[] | null>(null);
-    const [gameKey, setGameKey] = useState(0);
     const [loading, setLoading] = useState(false);
-    const [cardSize, setCardSize] = useState(80); // default fallback
 
-    // 🔄 Calculate card size based on screen width AND height
-    useEffect(() => {
-        const updateCardSize = () => {
-            const gutter = 12; // gap between cards (12px)
-            const padding = 32; // total padding from p-4 (left + right or top + bottom)
 
-            const usableWidth = window.innerWidth - padding;
-            const usableHeight = window.innerHeight - 250; // minus buttons + status area
-
-            const cardWidth = Math.floor((usableWidth - gutter * (columns - 1)) / columns);
-            const cardHeight = Math.floor((usableHeight - gutter * (rows - 1)) / rows);
-
-            setCardSize(Math.min(cardWidth, cardHeight));
-        };
-
-        updateCardSize();
-        window.addEventListener('resize', updateCardSize);
-        return () => window.removeEventListener('resize', updateCardSize);
-    }, [columns, rows]);
 
     const startGame = async () => {
         setLoading(true);
@@ -60,7 +40,6 @@ export default function StartGameButton({
             }
 
             setCards(data.game.deck);
-            setGameKey((prev) => prev + 1);
         } catch (error) {
             console.error('[StartGame] Error:', error);
             alert('Something went wrong. Please try again.');
@@ -83,10 +62,8 @@ export default function StartGameButton({
 
             {cards && (
                 <GameBoardSolo
-                    key={gameKey}
                     cards={cards}
                     columns={columns}
-                    cardSize={cardSize}
                 />
             )}
         </div>

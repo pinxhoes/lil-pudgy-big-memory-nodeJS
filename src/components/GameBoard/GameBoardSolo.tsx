@@ -8,7 +8,6 @@ import './Card.css';
 type GameBoardProps = {
     cards: number[];
     columns?: number;
-
 };
 
 export default function GameBoardSolo({ cards, columns = 8 }: GameBoardProps) {
@@ -32,8 +31,6 @@ export default function GameBoardSolo({ cards, columns = 8 }: GameBoardProps) {
             let rowFactor = 0.65;
             if (totalRows <= 3) rowFactor = 0.4;
             else if (totalRows === 4) rowFactor = 0.6;
-
-
 
             const maxHeight = screenHeight * rowFactor;
             const cardWidth = maxWidth / columns;
