@@ -8,10 +8,10 @@ import './Card.css';
 type GameBoardProps = {
     cards: number[];
     columns?: number;
-    cardSize?: number;
+
 };
 
-export default function GameBoardSolo({ cards, columns = 8, cardSize = 60 }: GameBoardProps) {
+export default function GameBoardSolo({ cards, columns = 8 }: GameBoardProps) {
     const [flippedCards, setFlippedCards] = useState<number[]>([]);
     const [matchedCards, setMatchedCards] = useState<Set<number>>(new Set());
     const [disabled, setDisabled] = useState(false);
@@ -19,6 +19,34 @@ export default function GameBoardSolo({ cards, columns = 8, cardSize = 60 }: Gam
     const [playerScore, setPlayerScore] = useState(0);
     const [computerScore, setComputerScore] = useState(0);
     const [gameOver, setGameOver] = useState(false);
+    const [cardSize, setCardSize] = useState(100);
+
+    useEffect(() => {
+        const updateCardSize = () => {
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+
+            const maxWidth = screenWidth * 0.9;
+            const totalRows = Math.ceil(cards.length / columns);
+
+            let rowFactor = 0.65;
+            if (totalRows <= 3) rowFactor = 0.4;
+            else if (totalRows === 4) rowFactor = 0.6;
+
+
+
+            const maxHeight = screenHeight * rowFactor;
+            const cardWidth = maxWidth / columns;
+            const cardHeight = maxHeight / totalRows;
+
+            const size = Math.min(cardWidth, cardHeight, 200);
+            setCardSize(size);
+        };
+
+        updateCardSize();
+        window.addEventListener('resize', updateCardSize);
+        return () => window.removeEventListener('resize', updateCardSize);
+    }, [columns, cards.length]);
 
     const handleFlip = useCallback(
         (index: number) => {
