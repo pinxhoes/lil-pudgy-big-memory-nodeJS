@@ -1,4 +1,5 @@
 import ClientLayout from '@/components/ClientLayout';
+import { Toaster } from 'react-hot-toast';
 import { wedges } from './fonts';
 import './globals.css';
 
@@ -27,6 +28,7 @@ export default function RootLayout({
       </head>
       <body className="bg-[#80abff] font-wedges ">
         <ClientLayout>{children}</ClientLayout>
+        <Toaster position="top-center" />
       </body>
     </html>
   );

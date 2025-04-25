@@ -11,34 +11,47 @@ export default function GameModeSelection() {
     const [showLogin, setShowLogin] = useState(false);
 
     return (
-        <main className="flex flex-col items-center justify-center p-4 min-h-screen bg-[#80abff] space-y-6 text-white font-wedges">
-            <h2 className="text-3xl mb-4">Choose a Board Size</h2>
+        <main className="min-h-[100dvh] bg-[#80abff] flex flex-col items-center justify-center px-4 text-white font-wedges">
+            <div className="flex flex-col items-center justify-center space-y-10 text-center">
+                <h2 className="text-5xl">Choose a Board Size</h2>
 
-            <button
-                onClick={() => router.push('/play/solo/3x4')}
-                className="mt-10 font-wedges text-xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
-                    px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
-                    transition-transform duration-150 active:scale-95 hover:brightness-110 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">3 x 4
-            </button>
-            <button
-                onClick={() => router.push('/play/solo/4x4')}
-                className="mt-10 font-wedges text-xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
-                    px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
-                    transition-transform duration-150 active:scale-95 hover:brightness-110 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">4 x 4
-            </button>
-            <button
-                onClick={() => router.push('/play/solo/6x6')}
-                className="mt-10 font-wedges text-xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
-                    px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
-                    transition-transform duration-150 active:scale-95 hover:brightness-110 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">6 x 6
-            </button>
-            <button
-                onClick={() => setShowRegister(true)}
-                className="mt-10 font-wedges text-xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
-                    px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
-                    transition-transform duration-150 active:scale-95 hover:brightness-110 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed">
-                Time Trial (Coming Soon)
-            </button>
+                <button
+                    onClick={() => router.push('/play/solo/3x4')}
+                    className="font-wedges text-3xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
+          px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
+          transition-transform duration-150 active:scale-95 hover:brightness-110"
+                >
+                    3 x 4
+                </button>
+
+                <button
+                    onClick={() => router.push('/play/solo/4x4')}
+                    className="font-wedges text-3xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
+          px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
+          transition-transform duration-150 active:scale-95 hover:brightness-110"
+                >
+                    4 x 4
+                </button>
+
+                <button
+                    onClick={() => router.push('/play/solo/6x6')}
+                    className="font-wedges text-3xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
+          px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
+          transition-transform duration-150 active:scale-95 hover:brightness-110"
+                >
+                    6 x 6
+                </button>
+
+                <button
+                    onClick={() => setShowRegister(true)}
+                    className="font-wedges text-3xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
+          px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
+          transition-transform duration-150 active:scale-95 hover:brightness-110"
+                >
+                    Time Trial (Coming Soon)
+                </button>
+            </div>
+
             {showRegister && (
                 <Register
                     onClose={() => setShowRegister(false)}
@@ -59,5 +72,5 @@ export default function GameModeSelection() {
                 />
             )}
         </main>
-    )
+    );
 }

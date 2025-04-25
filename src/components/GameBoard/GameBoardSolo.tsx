@@ -109,16 +109,16 @@ export default function GameBoardSolo({ cards, columns = 8 }: GameBoardProps) {
     }, [currentPlayer, flippedCards.length, disabled, matchedCards, cards]);
 
     return (
-        <>
+        <div className="min-h-[100dvh] bg-[#80abff] flex flex-col items-center justify-center px-4">
             {!gameOver ? (
                 <>
-                    <div className="text-center text-white mt-10 text-3xl">
+                    <div className="text-center text-white text-3xl">
                         {currentPlayer === 'human' ? 'Your turn 🧠' : 'Stoopid turn 🐧'}
                     </div>
                     <GameStatus playerScore={playerScore} computerScore={computerScore} />
                 </>
             ) : (
-                <div className="text-center text-white text-2xl mt-10">
+                <div className="text-center text-white text-2xl mt-6">
                     {playerScore > computerScore
                         ? 'You win! 🧠🎉'
                         : playerScore < computerScore
@@ -128,7 +128,7 @@ export default function GameBoardSolo({ cards, columns = 8 }: GameBoardProps) {
             )}
 
             <div
-                className={`grid gap-3 w-[90vw] max-w-[1000px] mx-auto mt-4`}
+                className={`grid gap-3 w-[90vw] max-w-[1000px] mt-6`}
                 style={{
                     gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
                 }}
@@ -158,6 +158,6 @@ export default function GameBoardSolo({ cards, columns = 8 }: GameBoardProps) {
                     );
                 })}
             </div>
-        </>
+        </div>
     );
 }

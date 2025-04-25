@@ -8,10 +8,29 @@ export default function Register({ onClose, onSwitchToLogin }: {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        console.log({ username, password });
+        try {
+            const res = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.error || 'Registration failed.');
+                return;
+            }
+
+            alert('Registration successful!');
+            onClose();
+        } catch (err) {
+            console.error('[Register] Error:', err);
+            alert('Something went wrong. Please try again.');
+        }
     };
 
     return (

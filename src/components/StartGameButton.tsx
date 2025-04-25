@@ -49,11 +49,14 @@ export default function StartGameButton({
     };
 
     return (
-        <div className="flex flex-col items-center justify-center p-4 min-h-screen bg-[#80abff] space-y-4">
+        <div
+            className={`flex flex-col items-center p-4 bg-[#80abff] ${cards ? '' : 'min-h-screen justify-center'
+                }`}
+        >
             <button
                 onClick={startGame}
                 disabled={loading}
-                className="mt-10 font-wedges text-xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
+                className="mb-2 font-wedges text-xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
         px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
         transition-transform duration-150 active:scale-95 hover:brightness-110 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >

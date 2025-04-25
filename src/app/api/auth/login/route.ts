@@ -1,26 +1,31 @@
-import { prisma } from '@lib/db'
-import { NextResponse } from 'next/server'
+// src/app/api/auth/login/route.ts
+import { prisma } from '@/app/lib/db';
+import bcrypt from 'bcrypt';
+import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
-    const body = await req.json()
-    const { username, password } = body
-
-    console.log('[POST] /api/auth/login', { username, password })
-
-    if (!username) {
-        return NextResponse.json({ message: 'Username is required' }, { status: 400 })
-    }
-
     try {
-        const user = await prisma.user.upsert({
-            where: { username: username as string },
-            update: {},
-            create: { username, password },
-        })
+        const { username, password } = await req.json();
 
-        return NextResponse.json({ user }, { status: 200 })
+        if (!username || !password) {
+            return NextResponse.json({ message: 'Missing credentials' }, { status: 400 });
+        }
+
+        const existingUser = await prisma.user.findUnique({ where: { username } });
+
+        if (!existingUser) {
+            return NextResponse.json({ message: 'User not found' }, { status: 404 });
+        }
+
+        const isPasswordCorrect = await bcrypt.compare(password, existingUser.password);
+
+        if (!isPasswordCorrect) {
+            return NextResponse.json({ message: 'Wrong password' }, { status: 401 });
+        }
+
+        return NextResponse.json({ user: { username: existingUser.username } }, { status: 200 });
     } catch (error) {
-        console.error('Login error:', error)
-        return NextResponse.json({ message: 'Internal server error' }, { status: 500 })
+        console.error('[LOGIN ERROR]', error);
+        return NextResponse.json({ message: 'Server error' }, { status: 500 });
     }
 }
