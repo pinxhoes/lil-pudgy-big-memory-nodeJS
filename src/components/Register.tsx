@@ -15,8 +15,8 @@ export default function Register({ onClose, onSwitchToLogin }: {
     };
 
     return (
-        <div className="fixed inset-0 bg-transparent backdrop-blur-sm z-50 flex justify-center items-center">
-            <div className="relative bg-[#4C6377]/90 w-[90%] max-w-md h-[50vh] rounded-[30px] shadow-xl px-6 py-8 overflow-y-auto animate-slide-down sm:animate-none flex flex-col justify-center items-center">
+        <div className="fixed inset-0 z-50 flex justify-center items-start sm:items-center pt-[15vh] sm:pt-0">
+            <div className="relative w-[90%] max-w-md bg-[#4C6377]/90 rounded-[30px] shadow-xl px-6 py-8 h-[75vh] sm:h-[50vh] animate-slide-down sm:animate-none flex flex-col justify-center items-center">
                 <div>
                     <h2 className="text-5xl text-center mb-20">WELCOME!</h2>
                     <div className="w-full">
