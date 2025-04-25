@@ -3,19 +3,19 @@ import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
     const body = await req.json()
-    const { wallet, privyId, username } = body
+    const { username, password } = body
 
-    console.log('[POST] /api/auth/login', { wallet, privyId, username })
+    console.log('[POST] /api/auth/login', { username, password })
 
-    if (!wallet) {
-        return NextResponse.json({ message: 'Wallet address is required' }, { status: 400 })
+    if (!username) {
+        return NextResponse.json({ message: 'Username is required' }, { status: 400 })
     }
 
     try {
         const user = await prisma.user.upsert({
-            where: { wallet },
-            update: { privyId, username },
-            create: { wallet, privyId, username },
+            where: { username: username as string },
+            update: {},
+            create: { username, password },
         })
 
         return NextResponse.json({ user }, { status: 200 })
