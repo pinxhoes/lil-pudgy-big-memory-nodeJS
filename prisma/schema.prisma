@@ -14,28 +14,28 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  wallet    String   @unique
-  privyId   String?  
-  username  String?
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String
+  email     String?  @unique
   createdAt DateTime @default(now())
 
-  gamesAsPlayer1 Game[] @relation("Player1")
-  gamesAsPlayer2 Game[] @relation("Player2")
+  player1Games Game[] @relation("Player1")
+  player2Games Game[] @relation("Player2")
 }
 
 model Game {
-  id          String   @id @default(cuid())
-  mode        String
-  player1Id   String
-  player2Id   String?
-  player1     User     @relation("Player1", fields: [player1Id], references: [id])
-  player2     User?    @relation("Player2", fields: [player2Id], references: [id])
-  winnerId    String?
-  createdAt   DateTime @default(now())
-  deck        Json?
-  revealed    Json?
+  id        String   @id @default(cuid())
+  mode      String
+  player1Id String
+  player2Id String?
+  player1   User     @relation("Player1", fields: [player1Id], references: [id])
+  player2   User?    @relation("Player2", fields: [player2Id], references: [id])
+  winnerId  String?
+  createdAt DateTime @default(now())
+  deck      Json?
+  revealed  Json?
 
-  status      String   @default("active") 
-  turn        Int      @default(1)        
+  status String @default("active")
+  turn   Int    @default(1)
 }
