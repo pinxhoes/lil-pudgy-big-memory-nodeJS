@@ -27,12 +27,11 @@ export async function POST(req: Request) {
     try {
         // 👇 Ensure guest user exists
         const player1 = await prisma.user.upsert({
-            where: { wallet: player1Id },
+            where: { username: player1Id },
             update: {},
             create: {
-                wallet: player1Id,
-                privyId: null,
                 username: player1Id,
+                password: 'guest',
             },
         });
 
