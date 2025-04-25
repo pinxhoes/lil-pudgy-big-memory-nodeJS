@@ -16,12 +16,12 @@ export default function Register({ onClose, onSwitchToRegister }: {
 
     return (
         <div className="fixed inset-0 z-50 pointer-events-none">
-            {/* Background blur (below header) */}
-            <div className="absolute top-[4rem] left-0 right-0 bottom-0 backdrop-blur-sm shadow-[0_10px_50px_rgba(0,0,0,0.3)] pointer-events-auto" />
+            {/* Blur below header */}
+            <div className="absolute top-[4rem] left-0 right-0 bottom-0 backdrop-blur-sm pointer-events-auto" />
 
-            {/* Modal container */}
+            {/* Modal centered both on desktop and mobile */}
             <div className="absolute inset-0 flex items-end sm:items-center justify-center pb-[5vh] sm:pb-0 pointer-events-none">
-                <div className="relative w-[90%] max-w-md h-[75vh] sm:h-[50vh] bg-[#4C6377]/90 rounded-[30px] shadow-xl px-6 py-8 
+                <div className="relative w-[90%] max-w-md h-[70vh] mt-[4.5rem] sm:mt-0 sm:h-[50vh] bg-[#4C6377]/90 rounded-[30px] shadow-xl px-6 py-8 
           animate-slide-up sm:animate-none flex flex-col justify-center items-center pointer-events-auto">
 
                     <div>

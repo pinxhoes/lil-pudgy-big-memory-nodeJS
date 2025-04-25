@@ -1,9 +1,14 @@
-'use client'
+import { forwardRef } from 'react';
 
-export default function Header() {
-    return (
-        <header className="fixed top-0 left-0 w-full z-50 bg-white rounded-b-[3rem] text-center py-4 shadow-md">
-            <h1 className="font-wedges text-xl sm:text-2xl text-black">STOOPID&apos;S GAME</h1>
-        </header>
-    );
-}
+const Header = forwardRef<HTMLElement>((_, ref) => (
+    <header
+        ref={ref}
+        className="w-full bg-white rounded-b-[40px] shadow-md text-center py-4 z-10"
+    >
+        <h1 className="font-wedges text-2xl text-black">STOOPID GAME</h1>
+    </header>
+));
+
+Header.displayName = 'Header';
+
+export default Header;

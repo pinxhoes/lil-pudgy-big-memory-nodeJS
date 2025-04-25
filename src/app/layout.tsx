@@ -1,4 +1,4 @@
-import Header from '@/components/Header';
+import ClientLayout from '@/components/ClientLayout';
 import { wedges } from './fonts';
 import './globals.css';
 
@@ -12,6 +12,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+
   return (
     <html lang="en" className={wedges.variable}>
       <head>
@@ -24,9 +25,8 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className="bg-[#f5fdff] font-wedges ">
-        <Header />
-        {children}
+      <body className="bg-[#80abff] font-wedges ">
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   );
