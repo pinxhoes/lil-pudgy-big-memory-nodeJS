@@ -6,9 +6,11 @@ import toast from 'react-hot-toast';
 export default function Login({
     onClose,
     onSwitchToRegister,
+    onLoginSuccess,
 }: {
     onClose: () => void;
     onSwitchToRegister: () => void;
+    onLoginSuccess: (username: string) => void;
 }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -27,8 +29,7 @@ export default function Login({
 
             switch (res.status) {
                 case 200:
-                    toast.success(`Welcome, ${data.user.username}`);
-                    onClose();
+                    onLoginSuccess(data.user.username);
                     break;
                 case 404:
                     toast.error('User doesn’t exist');
@@ -46,6 +47,7 @@ export default function Login({
     };
 
     return (
+
         <div className="fixed inset-0 z-50 pointer-events-none">
             {/* Blur background below header */}
             <div className="absolute top-[4rem] left-0 right-0 bottom-0 backdrop-blur-sm pointer-events-auto" />
@@ -105,5 +107,8 @@ export default function Login({
                 </div>
             </div>
         </div>
+
+
+
     );
 }

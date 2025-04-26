@@ -2,6 +2,7 @@
 
 import Login from '@/components/Login';
 import Register from '@/components/Register';
+import Welcome from '@/components/Welcome';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -9,6 +10,8 @@ export default function GameModeSelection() {
     const router = useRouter();
     const [showRegister, setShowRegister] = useState(false);
     const [showLogin, setShowLogin] = useState(false);
+    const [showWelcome, setShowWelcome] = useState(false);
+    const [loggedInUser, setLoggedInUser] = useState('');
 
     return (
         <main className="min-h-[100dvh] bg-[#80abff] flex flex-col items-center justify-center px-4 text-white font-wedges">
@@ -69,6 +72,20 @@ export default function GameModeSelection() {
                         setShowLogin(false);
                         setShowRegister(true);
                     }}
+                    onLoginSuccess={(username) => {
+                        setLoggedInUser(username);
+                        setShowLogin(false);
+                        setShowWelcome(true);
+                    }}
+                />
+            )}
+
+            {showWelcome && (
+                <Welcome
+                    username={loggedInUser}
+                    onClose={() => setShowWelcome(false)}
+                    onPlayNow={() => { router.push('/play/timetrial'); }}
+                    onViewRecord={() => { console.log('Open scoreboard modal (coming soon)'); }}
                 />
             )}
         </main>
