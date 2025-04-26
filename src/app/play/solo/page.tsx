@@ -1,7 +1,9 @@
 'use client'
 
+import Loading from '@/components/Loading';
 import Login from '@/components/Login';
 import Register from '@/components/Register';
+import Scoreboard from '@/components/Scoreboard';
 import Welcome from '@/components/Welcome';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -12,6 +14,23 @@ export default function GameModeSelection() {
     const [showLogin, setShowLogin] = useState(false);
     const [showWelcome, setShowWelcome] = useState(false);
     const [loggedInUser, setLoggedInUser] = useState('');
+    const [showScoreboard, setShowScoreboard] = useState(false);
+    const [scoreboardData, setScoreboardData] = useState([]);
+    const [isLoadingScoreboard, setIsLoadingScoreboard] = useState(false);
+
+    const fetchScoreboard = async () => {
+        try {
+            setIsLoadingScoreboard(true);
+            const res = await fetch('/api/scoreboard');
+            const data = await res.json();
+            setScoreboardData(data);
+            setShowScoreboard(true);
+        } catch (error) {
+            console.error('Error fetching scoreboard:', error);
+        } finally {
+            setIsLoadingScoreboard(false);
+        }
+    };
 
     return (
         <main className="min-h-[100dvh] bg-[#80abff] flex flex-col items-center justify-center px-4 text-white font-wedges">
@@ -51,7 +70,7 @@ export default function GameModeSelection() {
           px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
           transition-transform duration-150 active:scale-95 hover:brightness-110"
                 >
-                    Time Trial (Coming Soon)
+                    Time Trial
                 </button>
             </div>
 
@@ -85,8 +104,23 @@ export default function GameModeSelection() {
                     username={loggedInUser}
                     onClose={() => setShowWelcome(false)}
                     onPlayNow={() => { router.push('/play/timetrial'); }}
-                    onViewRecord={() => { console.log('Open scoreboard modal (coming soon)'); }}
+                    onViewRecord={() => {
+                        setShowWelcome(false);
+                        fetchScoreboard();
+                    }}
                 />
+            )}
+
+            {showScoreboard && (
+                <Scoreboard
+                    onClose={() => setShowScoreboard(false)}
+                    currentUsername={loggedInUser}
+                    scoreboardData={scoreboardData}
+                />
+            )}
+
+            {isLoadingScoreboard && (
+                <Loading />
             )}
         </main>
     );

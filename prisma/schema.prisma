@@ -36,6 +36,7 @@ model Game {
   deck      Json?
   revealed  Json?
 
+  time   Int?
   status String @default("active")
   turn   Int    @default(1)
 }
