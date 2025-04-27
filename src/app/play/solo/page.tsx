@@ -49,6 +49,14 @@ export default function GameModeSelection() {
         }
     }, []);
 
+    const handleTimeTrialClick = () => {
+        if (loggedInUser) {
+            router.push('/play/solo/timetrial');
+        } else {
+            setShowLogin(true);
+        }
+    };
+
     return (
         <main className="min-h-[100dvh] bg-[#80abff] flex flex-col items-center justify-center px-4 text-white font-wedges">
             <div className="flex flex-col items-center justify-center space-y-10 text-center">
@@ -57,8 +65,8 @@ export default function GameModeSelection() {
                 <button
                     onClick={() => router.push('/play/solo/3x4')}
                     className="font-wedges text-3xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
-          px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
-          transition-transform duration-150 active:scale-95 hover:brightness-110"
+            px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
+            transition-transform duration-150 active:scale-95 hover:brightness-110"
                 >
                     3 x 4
                 </button>
@@ -66,8 +74,8 @@ export default function GameModeSelection() {
                 <button
                     onClick={() => router.push('/play/solo/4x4')}
                     className="font-wedges text-3xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
-          px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
-          transition-transform duration-150 active:scale-95 hover:brightness-110"
+            px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
+            transition-transform duration-150 active:scale-95 hover:brightness-110"
                 >
                     4 x 4
                 </button>
@@ -75,17 +83,17 @@ export default function GameModeSelection() {
                 <button
                     onClick={() => router.push('/play/solo/6x6')}
                     className="font-wedges text-3xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
-          px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
-          transition-transform duration-150 active:scale-95 hover:brightness-110"
+            px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
+            transition-transform duration-150 active:scale-95 hover:brightness-110"
                 >
                     6 x 6
                 </button>
 
                 <button
-                    onClick={() => setShowRegister(true)}
+                    onClick={handleTimeTrialClick}
                     className="font-wedges text-3xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
-          px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
-          transition-transform duration-150 active:scale-95 hover:brightness-110"
+            px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
+            transition-transform duration-150 active:scale-95 hover:brightness-110"
                 >
                     Time Trial
                 </button>
@@ -111,7 +119,7 @@ export default function GameModeSelection() {
                     onLoginSuccess={(username) => {
                         setLoggedInUser(username);
                         setShowLogin(false);
-                        setShowWelcome(true);
+                        router.push('/play/solo/timetrial');
                     }}
                 />
             )}
@@ -120,7 +128,7 @@ export default function GameModeSelection() {
                 <Welcome
                     username={loggedInUser}
                     onClose={() => setShowWelcome(false)}
-                    onPlayNow={() => { router.push('/play/timetrial'); }}
+                    onPlayNow={() => { router.push('/play/solo/timetrial'); }}
                     onViewRecord={() => {
                         setShowWelcome(false);
                         fetchScoreboard();
@@ -136,9 +144,7 @@ export default function GameModeSelection() {
                 />
             )}
 
-            {isLoadingScoreboard && (
-                <Loading />
-            )}
+            {isLoadingScoreboard && <Loading />}
         </main>
     );
 }

@@ -52,7 +52,8 @@ const Header = forwardRef<HTMLElement>((_, ref) => {
                                 <div className="fixed inset-0 bg-transparent backdrop-blur-sm z-40 pointer-events-none" />
 
                                 {/* Dropdown menu */}
-                                <div className="absolute right-6 top-[80px] w-40 bg-white rounded-2xl shadow-lg z-50 animate-slide-down flex flex-col overflow-hidden">
+                                <div className="fixed top-[5rem] right-6 w-[250px] rounded-tl-[50px] rounded-bl-[50px] rounded-br-[50px] bg-white shadow-lg flex flex-col py-6 px-4 animate-slide-down z-50">
+                                    {/* Buttons inside here */}
                                     <button
                                         onClick={() => {
                                             console.log('Profile clicked');
