@@ -8,6 +8,12 @@ import Welcome from '@/components/Welcome';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+declare global {
+    interface Window {
+        openScoreboardFromDropdown?: () => void;
+    }
+}
+
 export default function GameModeSelection() {
     const router = useRouter();
     const [showRegister, setShowRegister] = useState(false);
@@ -36,6 +42,10 @@ export default function GameModeSelection() {
         const storedUser = localStorage.getItem('loggedInUser');
         if (storedUser) {
             setLoggedInUser(storedUser);
+        }
+
+        if (typeof window !== 'undefined') {
+            window.openScoreboardFromDropdown = fetchScoreboard;
         }
     }, []);
 
