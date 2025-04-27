@@ -1,5 +1,6 @@
 'use client';
 
+import { useUser } from '@/app/providers/UserProvider';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -14,6 +15,7 @@ export default function Login({
 }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const { setLoggedInUser } = useUser();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -29,6 +31,7 @@ export default function Login({
 
             switch (res.status) {
                 case 200:
+                    setLoggedInUser(data.user.username);
                     onLoginSuccess(data.user.username);
                     break;
                 case 404:

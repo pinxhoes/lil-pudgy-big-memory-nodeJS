@@ -1,5 +1,6 @@
 'use client';
 
+import { UserProvider } from '@/app/providers/UserProvider';
 import { useEffect, useRef, useState } from 'react';
 import Header from './Header';
 
@@ -13,10 +14,21 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         }
     }, []);
 
+
     return (
-        <>
-            <Header ref={headerRef} />
-            <div style={{ paddingTop: `${headerHeight}px` }}>{children}</div>
-        </>
+        <UserProvider>
+            <div className="relative min-h-[100dvh]">
+                <div className="fixed top-0 left-0 right-0 z-50">
+                    <Header ref={headerRef} />
+                </div>
+
+                <div
+                    className="relative z-10"
+                    style={{ paddingTop: `${headerHeight}px` }}
+                >
+                    {children}
+                </div>
+            </div>
+        </UserProvider>
     );
 }
