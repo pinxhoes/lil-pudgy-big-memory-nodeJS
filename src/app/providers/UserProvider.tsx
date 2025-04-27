@@ -1,28 +1,38 @@
 'use client';
 
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 type UserContextType = {
     loggedInUser: string;
     setLoggedInUser: (username: string) => void;
-    logout: () => void;
 };
 
-const UserContext = createContext<UserContextType | undefined>(undefined);
+const UserContext = createContext<UserContextType>({
+    loggedInUser: '',
+    setLoggedInUser: () => { },
+});
 
 export function UserProvider({ children }: { children: ReactNode }) {
     const [loggedInUser, setLoggedInUserState] = useState('');
 
-    const setLoggedInUser = (username: string) => {
-        setLoggedInUserState(username);
-    };
+    useEffect(() => {
+        const savedUser = localStorage.getItem('loggedInUser');
+        if (savedUser) {
+            setLoggedInUserState(savedUser);
+        }
+    }, []);
 
-    const logout = () => {
-        setLoggedInUserState('');
+    const setLoggedInUser = (user: string) => {
+        setLoggedInUserState(user);
+        if (user) {
+            localStorage.setItem('loggedInUser', user);
+        } else {
+            localStorage.removeItem('loggedInUser');
+        }
     };
 
     return (
-        <UserContext.Provider value={{ loggedInUser, setLoggedInUser, logout }}>
+        <UserContext.Provider value={{ loggedInUser, setLoggedInUser }}>
             {children}
         </UserContext.Provider>
     );

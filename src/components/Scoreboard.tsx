@@ -27,16 +27,21 @@ export default function Scoreboard({
     };
 
     return (
-        <div className="fixed inset-0 z-50 pointer-events-none">
-            <div className="absolute top-[4rem] left-0 right-0 bottom-0 backdrop-blur-sm pointer-events-auto" />
+        <div className="fixed inset-x-0 top-[4.5rem] bottom-0 z-50 pointer-events-none">
+            {/* Blur background */}
+            <div className="absolute inset-0 backdrop-blur-sm pointer-events-auto" />
 
-            <div className="absolute inset-0 flex items-end sm:items-center justify-center pb-[5vh] sm:pb-0 pointer-events-none">
-                <div className="relative w-[90%] max-w-md sm:max-w-5xl h-[80vh] mt-[4.5rem] sm:mt-0 sm:h-[70vh] bg-[#4C6377]/90 rounded-[30px] shadow-xl px-6 py-8 
-          animate-slide-up sm:animate-none flex flex-col items-center pointer-events-auto overflow-hidden">
+            {/* Modal Container */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
+                <div className="relative w-[90%] max-w-md sm:max-w-5xl h-[80vh] bg-[#4C6377]/90 rounded-[30px] shadow-xl px-6 py-8 
+          animate-slide-up flex flex-col items-center pointer-events-auto overflow-hidden">
 
-                    <h2 className="text-3xl sm:text-5xl text-center mb-2 font-wedges">SCOREBOARD</h2>
+                    {/* Title */}
+                    <h2 className="text-3xl sm:text-5xl text-center mb-4 font-wedges">SCOREBOARD</h2>
 
-                    <div className="flex flex-col w-full gap-2 overflow-y-auto scrollbar-hide max-h-[50vh] sm:max-h-[40vh]">
+                    {/* Scrollable list */}
+                    <div className="flex flex-col w-full gap-2 overflow-y-auto max-h-[55vh] sm:max-h-[40vh] px-1
+    scrollbar-thin scrollbar-thumb-[#fcd34d] scrollbar-track-transparent rounded-lg">
                         {scoreboardData.map((entry, index) => {
                             const isTop = index === 0;
                             const isCurrentUser = entry.username === currentUsername;
@@ -75,6 +80,7 @@ export default function Scoreboard({
                         })}
                     </div>
 
+                    {/* Beat the Record button */}
                     <button
                         onClick={() => router.push('/play/timetrial')}
                         className="mt-6 bg-gradient-to-b from-[#fcd34d] to-[#f59e0b] text-white font-wedges text-lg rounded-full 
@@ -83,6 +89,7 @@ export default function Scoreboard({
                         BEAT THE RECORD
                     </button>
 
+                    {/* Close Button */}
                     <button
                         onClick={onClose}
                         className="absolute top-2 right-4 text-5xl drop-shadow-md font-bold text-white z-10 transition-transform duration-150 hover:scale-125 active:scale-90"

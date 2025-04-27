@@ -33,6 +33,7 @@ export default function Login({
                 case 200:
                     setLoggedInUser(data.user.username);
                     onLoginSuccess(data.user.username);
+                    localStorage.setItem('loggedInUser', data.user.username);
                     break;
                 case 404:
                     toast.error('User doesn’t exist');

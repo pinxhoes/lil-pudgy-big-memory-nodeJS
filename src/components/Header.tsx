@@ -2,15 +2,23 @@
 
 import { useUser } from '@/app/providers/UserProvider';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { forwardRef, useState } from 'react';
 import DropdownMenu from './DropdownMenu';
 
 const Header = forwardRef<HTMLElement>((_, ref) => {
-    const { loggedInUser, logout } = useUser();
+    const { loggedInUser, setLoggedInUser } = useUser();
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const router = useRouter();
 
     const toggleDropdown = () => {
         setDropdownOpen((prev) => !prev);
+    };
+
+    const handleLogout = () => {
+        setLoggedInUser('');
+        localStorage.removeItem('loggedInUser');
+        router.push('/');
     };
 
     return (
@@ -18,7 +26,7 @@ const Header = forwardRef<HTMLElement>((_, ref) => {
             ref={ref}
             className="w-full bg-white rounded-b-[40px] shadow-md py-4 px-6 flex items-center justify-between z-30"
         >
-            <h1 className="font-wedges text-2xl text-[#00142d]">
+            <h1 className="flex items-center font-wedges text-xl text-[#00142d] tracking-wide">
                 STOOPID GAME
             </h1>
 
@@ -39,26 +47,29 @@ const Header = forwardRef<HTMLElement>((_, ref) => {
 
                     {dropdownOpen && (
                         <DropdownMenu>
-                            <div className="absolute right-6 top-[80px] w-32 bg-white rounded-lg shadow-lg overflow-hidden z-50">
+                            <div
+                                className="fixed right-6 top-[6rem] w-40 sm:w-48 bg-white rounded-b-[30px] rounded-tl-[30px] shadow-[0_6px_18px_rgba(0,0,0,0.25)] overflow-hidden z-50 font-wedges
+      animate-slide-down"
+                                style={{ minWidth: '10rem' }}
+                            >
                                 <button
                                     onClick={() => {
                                         console.log('Profile clicked');
                                         setDropdownOpen(false);
                                     }}
-                                    className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                                    className="block w-full text-left px-6 py-4 text-[#00142d] hover:bg-gray-100 text-lg tracking-wide"
                                 >
-                                    Profile
+                                    PROFILE
                                 </button>
                                 <button
                                     onClick={() => {
-                                        logout();
+                                        handleLogout();
                                         setDropdownOpen(false);
                                     }}
-                                    className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                                    className="block w-full text-left px-6 py-4 text-[#00142d] hover:bg-gray-100 text-lg tracking-wide"
                                 >
-                                    Logout
+                                    LOGOUT
                                 </button>
-
                             </div>
                         </DropdownMenu>
                     )}

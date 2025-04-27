@@ -6,7 +6,7 @@ import Register from '@/components/Register';
 import Scoreboard from '@/components/Scoreboard';
 import Welcome from '@/components/Welcome';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function GameModeSelection() {
     const router = useRouter();
@@ -31,6 +31,13 @@ export default function GameModeSelection() {
             setIsLoadingScoreboard(false);
         }
     };
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('loggedInUser');
+        if (storedUser) {
+            setLoggedInUser(storedUser);
+        }
+    }, []);
 
     return (
         <main className="min-h-[100dvh] bg-[#80abff] flex flex-col items-center justify-center px-4 text-white font-wedges">

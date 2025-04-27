@@ -64,18 +64,16 @@ export default function GameBoardSolo({ cards: initialCards, columns = 8, userId
             const screenWidth = window.innerWidth;
             const screenHeight = window.innerHeight;
 
-            const maxWidth = screenWidth * 0.9;
+            const isMobile = screenWidth < 768; // 🧠 Tailwind's md breakpoint
+            const maxBoardWidth = screenWidth * 0.9;
+            const maxBoardHeight = isMobile ? screenHeight * 0.5 : screenHeight * 0.75; // 50% on mobile, 75% on desktop
+
             const totalRows = Math.ceil(cards.length / columns);
 
-            let rowFactor = 0.65;
-            if (totalRows <= 3) rowFactor = 0.4;
-            else if (totalRows === 4) rowFactor = 0.6;
+            const cardWidth = maxBoardWidth / columns;
+            const cardHeight = maxBoardHeight / totalRows;
 
-            const maxHeight = screenHeight * rowFactor;
-            const cardWidth = maxWidth / columns;
-            const cardHeight = maxHeight / totalRows;
-
-            const size = Math.min(cardWidth, cardHeight, 200);
+            const size = Math.min(cardWidth, cardHeight, 200); // 🧠 200px max
             setCardSize(size);
         };
 
@@ -196,12 +194,12 @@ export default function GameBoardSolo({ cards: initialCards, columns = 8, userId
 
             {/* Other UI */}
             {!gameOver ? (
-                <>
+                <div className="flex flex-col items-center gap-2">
                     <div className="text-center text-white text-3xl">
-                        {currentPlayer === 'human' ? 'Your turn' : 'Stoopid turn'}
+                        {currentPlayer === 'human' ? 'Your turn 🧠' : 'Stoopid turn 🐧'}
                     </div>
                     <GameStatus playerScore={playerScore} computerScore={computerScore} />
-                </>
+                </div>
             ) : (
                 <div className="text-center text-white text-2xl mt-6">
                     {playerScore > computerScore
