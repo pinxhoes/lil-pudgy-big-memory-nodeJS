@@ -65,6 +65,8 @@ export default function StartGameButton({
 
             {cards && (
                 <GameBoardSolo
+                    userId={userId}
+                    gridSize={gridSize}
                     cards={cards}
                     columns={columns}
                 />
