@@ -7,7 +7,7 @@ import './Card.css';
 
 type GameBoardTimetrialProps = {
     cards?: number[];
-    userId: string;
+    username: string;
     gridSize: number;
 };
 
@@ -18,7 +18,7 @@ type ScoreEntry = {
 
 export default function GameBoardTimetrial({
     cards: initialCards,
-    userId,
+    username,
     gridSize,
 }: GameBoardTimetrialProps) {
     const [cards, setCards] = useState<number[]>(initialCards ?? []);
@@ -37,7 +37,7 @@ export default function GameBoardTimetrial({
 
     useEffect(() => {
         if (!initialCards || initialCards.length === 0) {
-            if (!userId) return;
+            if (!username) return;
 
             const createNewGame = async () => {
                 setLoading(true);
@@ -45,7 +45,7 @@ export default function GameBoardTimetrial({
                     const res = await fetch('/api/game/create', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ gridSize, userId, mode: 'timetrial' }),
+                        body: JSON.stringify({ gridSize, username, mode: 'timetrial' }),
                     });
 
                     const data = await res.json();
@@ -68,7 +68,7 @@ export default function GameBoardTimetrial({
 
             createNewGame();
         }
-    }, [initialCards, userId, gridSize]);
+    }, [initialCards, username, gridSize]);
 
     useEffect(() => {
         const updateLayout = () => {
@@ -163,18 +163,21 @@ export default function GameBoardTimetrial({
                 }
 
                 const finalTime = Date.now() - startTime;
+
+                // Always submit the score first
+                if (username) {
+                    submitScore(username, finalTime);
+                }
+
+                // Then decide if it's a win or lose
                 if (bestTime === null || finalTime < bestTime) {
                     setGameResult('win');
-
-                    if (userId) {
-                        submitScore(userId, finalTime);
-                    }
                 } else {
                     setGameResult('lose');
                 }
             }
         }
-    }, [matchedCards, cards, startTime, bestTime, userId]);
+    }, [matchedCards, cards, startTime, bestTime, username]);
 
     const formatTime = (ms: number) => {
         const totalSeconds = Math.floor(ms / 1000);
@@ -186,15 +189,18 @@ export default function GameBoardTimetrial({
         return `${m}:${s}:${msFormatted}`;
     };
 
-    const submitScore = async (username: string, time: number) => {
+    const submitScore = async (username: string, finaltime: number) => {
         try {
+            console.log('[Submitting score]', { username, finaltime });
             const res = await fetch('/api/score/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, time }),
+                body: JSON.stringify({ username, time: finaltime }),
             });
 
             const data = await res.json();
+            console.log('[Submit response]', data);
+
             if (!res.ok) {
                 console.error('Failed to submit score:', data.message);
             } else {

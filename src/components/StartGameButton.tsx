@@ -4,14 +4,14 @@ import { useState } from 'react';
 import GameBoardSolo from './GameBoard/GameBoardSolo';
 
 type StartGameButtonProps = {
-    userId: string;
+    username: string;
     gridSize?: number;
     columns?: number;
     rows?: number;
 };
 
 export default function StartGameButton({
-    userId,
+    username,
     gridSize = 48,
     columns = 8,
 
@@ -28,7 +28,7 @@ export default function StartGameButton({
             const res = await fetch('/api/game/create', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ mode: 'solo', player1Id: userId, gridSize }),
+                body: JSON.stringify({ mode: 'solo', player1Id: username, gridSize }),
             });
 
             const data = await res.json();
@@ -65,7 +65,7 @@ export default function StartGameButton({
 
             {cards && (
                 <GameBoardSolo
-                    userId={userId}
+                    userId={username}
                     gridSize={gridSize}
                     cards={cards}
                     columns={columns}
