@@ -69,7 +69,7 @@ export default function StartGameButton({
                     gridSize={gridSize}
                     cards={cards}
                     columns={columns}
-                />
+                    rows={0} />
             )}
         </div>
     );
