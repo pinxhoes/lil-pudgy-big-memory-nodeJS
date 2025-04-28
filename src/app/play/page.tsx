@@ -33,7 +33,7 @@ export default function Play() {
                         </button>
                     </>
                 ) : mode === 'solo' ? (
-                    <StartGameButton userId={userIdFromDB} gridSize={0} />
+                    <StartGameButton username={userIdFromDB} gridSize={0} />
                 ) : (
                     <div className="flex flex-col items-center gap-6">
                         <div className="text-[#00142d] text-xl">Multiplayer coming soon!</div>
