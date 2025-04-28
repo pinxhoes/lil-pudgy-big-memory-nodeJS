@@ -179,11 +179,11 @@ export default function GameBoardTimetrial({
     const formatTime = (ms: number) => {
         const totalSeconds = Math.floor(ms / 1000);
         const milliseconds = Math.floor((ms % 1000) / 10);
-        const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+        //const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
         const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
         const s = String(totalSeconds % 60).padStart(2, '0');
         const msFormatted = String(milliseconds).padStart(2, '0');
-        return `${h}:${m}:${s}:${msFormatted}`;
+        return `${m}:${s}:${msFormatted}`;
     };
 
     const submitScore = async (username: string, time: number) => {

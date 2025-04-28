@@ -22,11 +22,11 @@ export default function Scoreboard({
     const formatTime = (ms: number): string => {
         const totalSeconds = Math.floor(ms / 1000);
         const milliseconds = Math.floor((ms % 1000) / 10);
-        const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+        //const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
         const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
         const s = String(totalSeconds % 60).padStart(2, '0');
         const msFormatted = String(milliseconds).padStart(2, '0');
-        return `${h} : ${m} : ${s} : ${msFormatted}`;
+        return `${m} : ${s} : ${msFormatted}`;
     };
 
     return (

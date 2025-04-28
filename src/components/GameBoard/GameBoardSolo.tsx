@@ -162,13 +162,13 @@ export default function GameBoardSolo({
             <div className="text-white font-wedges text-3xl">{getStatusText()}</div>
 
             {/* Score Text */}
-            <div className="text-white font-wedges text-2xl">
+            <div className="text-white font-wedges text-lg sm:text-2xl px-4 sm:px-0 text-center">
                 Your score: {playerScore} | Stoopid score: {computerScore}
             </div>
 
             {/* Cards */}
             <div
-                className="grid gap-2 mt-4 pb-8"
+                className="grid gap-2 mt-4 pb-8 px-2 sm:px-0"
                 style={{
                     gridTemplateColumns: `repeat(${columns}, ${cardSize}px)`
                 }}
