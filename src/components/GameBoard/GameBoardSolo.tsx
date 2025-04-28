@@ -36,18 +36,15 @@ export default function GameBoardSolo({
             const createNewGame = async () => {
                 setLoading(true);
                 try {
-                    const res = await fetch('/api/game/create', {
+                    const res = await fetch('/api/game/solo', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            username: userId,
-                            gridSize,
-                        }),
+                        body: JSON.stringify({ gridSize }),
                     });
 
                     const data = await res.json();
-                    if (res.ok && data.game?.deck) {
-                        setCards(data.game.deck);
+                    if (res.ok && data.deck) {
+                        setCards(data.deck);
                     } else {
                         console.error('[Initial Game] Invalid response:', data);
                     }
@@ -171,7 +168,7 @@ export default function GameBoardSolo({
 
             {/* Cards */}
             <div
-                className="grid gap-2 mt-4"
+                className="grid gap-2 mt-4 pb-8"
                 style={{
                     gridTemplateColumns: `repeat(${columns}, ${cardSize}px)`
                 }}

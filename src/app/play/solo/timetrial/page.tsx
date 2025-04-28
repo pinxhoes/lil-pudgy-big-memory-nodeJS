@@ -19,7 +19,7 @@ export default function GameTimeTrial() {
             {userId && (
                 <GameBoardTimetrial
                     userId={userId}
-                    gridSize={12}
+                    gridSize={48}
                 />
             )}
         </main>

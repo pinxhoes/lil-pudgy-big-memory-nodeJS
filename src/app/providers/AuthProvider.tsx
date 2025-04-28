@@ -15,6 +15,8 @@ interface AuthContextType {
     openRegister: () => void;
     openWelcome: () => void;
     closeAllModals: () => void;
+    openScoreboard: () => void;
+    logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -59,6 +61,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setShowWelcome(false);
     };
 
+    const openScoreboard = () => {
+        if (typeof window !== 'undefined' && window.openScoreboardFromDropdown) {
+            window.openScoreboardFromDropdown();
+        }
+    };
+
+    const logout = () => {
+        setLoggedInUser('');
+        localStorage.removeItem('loggedInUser');
+        window.location.href = '/';
+    };
+
     return (
         <AuthContext.Provider
             value={{
@@ -71,6 +85,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 openRegister,
                 openWelcome,
                 closeAllModals,
+                openScoreboard,
+                logout
             }}
         >
             {children}

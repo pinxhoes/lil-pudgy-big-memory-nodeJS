@@ -26,7 +26,7 @@ export default function GameBoardTimetrial({
     const [matchedCards, setMatchedCards] = useState<Set<number>>(new Set());
     const [disabled, setDisabled] = useState(false);
     const [cardSize, setCardSize] = useState(100);
-    const [columns, setColumns] = useState(8); // default to desktop
+    const [columns, setColumns] = useState(8);
     const [loading, setLoading] = useState(false);
 
     const [startTime, setStartTime] = useState<number | null>(null);
@@ -183,7 +183,7 @@ export default function GameBoardTimetrial({
         const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
         const s = String(totalSeconds % 60).padStart(2, '0');
         const msFormatted = String(milliseconds).padStart(2, '0');
-        return `${h}:${m}:${s}.${msFormatted}`;
+        return `${h}:${m}:${s}:${msFormatted}`;
     };
 
     const submitScore = async (username: string, time: number) => {
@@ -248,7 +248,7 @@ export default function GameBoardTimetrial({
 
             {/* Cards Grid */}
             <div
-                className="grid gap-2 mt-4"
+                className="grid gap-2 mt-4 pb-8"
                 style={{
                     gridTemplateColumns: `repeat(${columns}, ${cardSize}px)`,
                 }}

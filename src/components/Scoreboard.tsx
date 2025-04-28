@@ -19,21 +19,24 @@ export default function Scoreboard({
 }) {
     const router = useRouter();
 
-    const formatTime = (seconds: number): string => {
-        const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
-        const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
-        const s = String(seconds % 60).padStart(2, '0');
-        return `${h} : ${m} : ${s}`;
+    const formatTime = (ms: number): string => {
+        const totalSeconds = Math.floor(ms / 1000);
+        const milliseconds = Math.floor((ms % 1000) / 10);
+        const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+        const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+        const s = String(totalSeconds % 60).padStart(2, '0');
+        const msFormatted = String(milliseconds).padStart(2, '0');
+        return `${h} : ${m} : ${s} : ${msFormatted}`;
     };
 
     return (
-        <div className="fixed inset-0 z-50 pointer-events-none">
+        <div className="fixed inset-0 z-20 pointer-events-none">
             {/* Blur background below header */}
-            <div className="absolute top-[4rem] left-0 right-0 bottom-0 backdrop-blur-sm pointer-events-auto" />
+            <div className="absolute top-[4.7rem] left-0 right-0 bottom-0 backdrop-blur-sm pointer-events-auto" />
 
             {/* Modal layout */}
             <div className="absolute inset-0 flex items-end sm:items-center justify-center pb-[5vh] sm:pb-0 pointer-events-none">
-                <div className="relative w-[90%] max-w-md h-[70vh] mt-[4.5rem] sm:mt-0 sm:h-[50vh] bg-[#4C6377]/90 rounded-[30px] shadow-xl px-6 py-8 
+                <div className="relative w-[90%] max-w-md h-[70vh] mt-[4.5rem] sm:mt-0 sm:h-[50vh] bg-[#4C6377]/60 rounded-[30px] shadow-xl px-6 py-8 
           animate-slide-up sm:animate-none flex flex-col items-center pointer-events-auto overflow-hidden">
 
                     {/* Title */}
@@ -54,7 +57,7 @@ export default function Scoreboard({
 
                             return (
                                 <div
-                                    key={entry.username}
+                                    key={`${entry.username}-${index}`}
                                     className="flex items-center justify-between px-4 py-2 rounded-full shadow"
                                     style={{ backgroundColor: bgColor }}
                                 >
@@ -83,7 +86,11 @@ export default function Scoreboard({
 
                     {/* Beat the Record button */}
                     <button
-                        onClick={() => router.push('/play/timetrial')}
+
+                        onClick={() => {
+                            onClose();
+                            router.push('/play/solo/timetrial')
+                        }}
                         className="mt-6 bg-gradient-to-b from-[#fcd34d] to-[#f59e0b] text-white font-wedges text-lg rounded-full 
               shadow-[0_6px_18px_rgba(0,0,0,0.25)] px-6 py-3 active:scale-95 hover:brightness-110 transition-transform"
                     >

@@ -11,4 +11,4 @@ export default function GameStatus({ playerScore, computerScore }: GameStatusPro
             Your score: {playerScore} | Stoopid score: {computerScore}
         </div>
     );
-}
+}   

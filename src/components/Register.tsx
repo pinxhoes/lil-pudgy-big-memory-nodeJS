@@ -1,12 +1,15 @@
 'use client';
 
+import { useAuth } from '@/app/providers/AuthProvider';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 export default function Register({ onClose, onSwitchToLogin }: {
     onClose: () => void; onSwitchToLogin: () => void
 }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const { setLoggedInUser, openWelcome } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -20,25 +23,25 @@ export default function Register({ onClose, onSwitchToLogin }: {
 
             const data = await res.json();
 
-            if (!res.ok) {
-                alert(data.error || 'Registration failed.');
-                return;
+            if (res.ok) {
+                setLoggedInUser(data.user.username);
+                localStorage.setItem('loggedInUser', data.user.username);
+                onClose();
+                openWelcome();
+                toast.success('Registration successful!');
+            } else {
+                toast.error(data.message || 'Registration failed');
             }
-
-            alert('Registration successful!');
-            onClose();
         } catch (err) {
             console.error('[Register] Error:', err);
-            alert('Something went wrong. Please try again.');
+            toast.error('Something went wrong. Please try again.');
         }
     };
 
     return (
         <div className="fixed inset-0 z-50 pointer-events-none">
-            {/* Blur below header */}
             <div className="absolute top-[4rem] left-0 right-0 bottom-0 backdrop-blur-sm  pointer-events-auto" />
 
-            {/* Modal centered both on desktop and mobile */}
             <div className="absolute inset-0 flex items-end sm:items-center justify-center pb-[5vh] sm:pb-0 pointer-events-none">
                 <div className="relative w-[90%] max-w-md h-[70vh] mt-[4.5rem] sm:mt-0 sm:h-[50vh] bg-[#4C6377]/90 rounded-[30px] shadow-xl px-6 py-8 animate-slide-up sm:animate-none flex flex-col justify-center items-center pointer-events-auto">
 
@@ -83,7 +86,6 @@ export default function Register({ onClose, onSwitchToLogin }: {
                         </button>
                     </p>
 
-                    {/* Close Button */}
                     <button
                         onClick={onClose}
                         className="absolute top-2 right-4 text-5xl drop-shadow-md font-bold text-white z-10 transition-transform duration-150 hover:scale-125 active:scale-90"

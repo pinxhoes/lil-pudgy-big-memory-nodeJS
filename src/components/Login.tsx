@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from '@/app/providers/UserProvider';
+import { useAuth } from '@/app/providers/AuthProvider';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -15,7 +15,7 @@ export default function Login({
 }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const { setLoggedInUser } = useUser();
+    const { setLoggedInUser } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -33,7 +33,7 @@ export default function Login({
                 case 200:
                     setLoggedInUser(data.user.username);
                     onLoginSuccess(data.user.username);
-                    localStorage.setItem('loggedInUser', data.user.username);
+                    //localStorage.setItem('loggedInUser', data.user.username);
                     break;
                 case 404:
                     toast.error('User doesn’t exist');
