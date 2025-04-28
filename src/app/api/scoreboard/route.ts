@@ -4,25 +4,27 @@ import { NextResponse } from 'next/server';
 export async function GET() {
     try {
         const games = await prisma.game.findMany({
-            where: {
-                time: { gt: 0 },
+            select: {
+                user: {
+                    select: { username: true },
+                },
+                time: true,
             },
             orderBy: {
                 time: 'asc',
             },
-            include: {
-                user: {
-                    select: {
-                        username: true,
-                    },
-                },
-            },
         });
 
-        const scoreboard = games.map((game) => ({
-            username: game.user.username,
-            time: game.time,
-        }));
+        const bestTimePerUser = new Map<string, { username: string; time: number }>();
+
+        for (const game of games) {
+            const username = game.user.username;
+            if (!bestTimePerUser.has(username)) {
+                bestTimePerUser.set(username, { username, time: game.time });
+            }
+        }
+
+        const scoreboard = Array.from(bestTimePerUser.values());
 
         return NextResponse.json(scoreboard);
     } catch (error) {
