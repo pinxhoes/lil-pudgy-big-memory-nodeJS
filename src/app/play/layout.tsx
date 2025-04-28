@@ -1,7 +1,13 @@
+"use client";
+
+import { AuthProvider } from '@/app/providers/AuthProvider';
+
 export default function PlayLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div>
-            <main>{children}</main>
-        </div>
+        <AuthProvider> {/* ✅ wrap here */}
+            <div>
+                <main>{children}</main>
+            </div>
+        </AuthProvider>
     )
 }

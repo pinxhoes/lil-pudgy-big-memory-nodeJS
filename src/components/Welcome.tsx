@@ -17,7 +17,7 @@ export default function Welcome({ username, onPlayNow, onViewRecord, onClose }: 
                 <div className="relative w-[90%] max-w-md h-[70vh] mt-[4.5rem] sm:mt-0 sm:h-[50vh] bg-[#4C6377]/90 rounded-[30px] shadow-xl px-6 py-8 
         animate-slide-up sm:animate-none flex flex-col justify-center items-center pointer-events-auto">
 
-                    <h2 className="text-3xl sm:text-5xl text-center mb-2 font-wedges">WELCOME {username.toUpperCase()}!</h2>
+                    <h2 className="text-3xl sm:text-5xl text-center text-white mb-2 font-wedges">WELCOME {username.toUpperCase()}!</h2>
 
                     <div className="mb-2">
                         <Image src="/img/userLogo.svg" alt="User Icon" width={190} height={190} className="rounded-full" />

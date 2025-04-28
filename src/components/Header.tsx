@@ -67,7 +67,7 @@ const Header = forwardRef<HTMLElement>((_, ref) => {
                                     <button
                                         onClick={() => {
                                             if (typeof window !== 'undefined' && window.openScoreboardFromDropdown) {
-                                                window.openScoreboardFromDropdown();
+                                                window.openScoreboardFromDropdown(); // ✅ fetch & open
                                             }
                                             setDropdownOpen(false);
                                         }}

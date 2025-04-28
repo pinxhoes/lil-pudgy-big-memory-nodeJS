@@ -62,7 +62,7 @@ export default function Login({
           animate-slide-up sm:animate-none flex flex-col justify-center items-center pointer-events-auto">
 
                     <div>
-                        <h2 className="text-5xl text-center mb-20">WELCOME BACK!</h2>
+                        <h2 className="text-5xl text-white text-center mb-20">WELCOME BACK!</h2>
                         <div className="w-full">
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <input
@@ -92,7 +92,7 @@ export default function Login({
                         </div>
                     </div>
 
-                    <p className="text-center text-sm mt-6">
+                    <p className="text-center text-white text-sm mt-6">
                         DONT HAVE AN ACCOUNT?{' '}
                         <button
                             onClick={onSwitchToRegister}

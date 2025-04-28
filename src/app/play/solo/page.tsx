@@ -1,10 +1,8 @@
-'use client'
+'use client';
 
+import { useAuth } from '@/app/providers/AuthProvider';
 import Loading from '@/components/Loading';
-import Login from '@/components/Login';
-import Register from '@/components/Register';
 import Scoreboard from '@/components/Scoreboard';
-import Welcome from '@/components/Welcome';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -16,10 +14,7 @@ declare global {
 
 export default function GameModeSelection() {
     const router = useRouter();
-    const [showRegister, setShowRegister] = useState(false);
-    const [showLogin, setShowLogin] = useState(false);
-    const [showWelcome, setShowWelcome] = useState(false);
-    const [loggedInUser, setLoggedInUser] = useState('');
+    const { loggedInUser, openLogin } = useAuth();
     const [showScoreboard, setShowScoreboard] = useState(false);
     const [scoreboardData, setScoreboardData] = useState([]);
     const [isLoadingScoreboard, setIsLoadingScoreboard] = useState(false);
@@ -39,11 +34,6 @@ export default function GameModeSelection() {
     };
 
     useEffect(() => {
-        const storedUser = localStorage.getItem('loggedInUser');
-        if (storedUser) {
-            setLoggedInUser(storedUser);
-        }
-
         if (typeof window !== 'undefined') {
             window.openScoreboardFromDropdown = fetchScoreboard;
         }
@@ -53,7 +43,7 @@ export default function GameModeSelection() {
         if (loggedInUser) {
             router.push('/play/solo/timetrial');
         } else {
-            setShowLogin(true);
+            openLogin();
         }
     };
 
@@ -65,8 +55,8 @@ export default function GameModeSelection() {
                 <button
                     onClick={() => router.push('/play/solo/3x4')}
                     className="font-wedges text-3xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
-            px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
-            transition-transform duration-150 active:scale-95 hover:brightness-110"
+                    px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
+                    transition-transform duration-150 active:scale-95 hover:brightness-110"
                 >
                     3 x 4
                 </button>
@@ -74,8 +64,8 @@ export default function GameModeSelection() {
                 <button
                     onClick={() => router.push('/play/solo/4x4')}
                     className="font-wedges text-3xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
-            px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
-            transition-transform duration-150 active:scale-95 hover:brightness-110"
+                    px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
+                    transition-transform duration-150 active:scale-95 hover:brightness-110"
                 >
                     4 x 4
                 </button>
@@ -83,8 +73,8 @@ export default function GameModeSelection() {
                 <button
                     onClick={() => router.push('/play/solo/6x6')}
                     className="font-wedges text-3xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
-            px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
-            transition-transform duration-150 active:scale-95 hover:brightness-110"
+                    px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
+                    transition-transform duration-150 active:scale-95 hover:brightness-110"
                 >
                     6 x 6
                 </button>
@@ -92,49 +82,12 @@ export default function GameModeSelection() {
                 <button
                     onClick={handleTimeTrialClick}
                     className="font-wedges text-3xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
-            px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
-            transition-transform duration-150 active:scale-95 hover:brightness-110"
+                    px-[2.5rem] py-[1rem] rounded-full shadow-[0_6px_18px_rgba(0,0,0,0.25)]
+                    transition-transform duration-150 active:scale-95 hover:brightness-110"
                 >
                     Time Trial
                 </button>
             </div>
-
-            {showRegister && (
-                <Register
-                    onClose={() => setShowRegister(false)}
-                    onSwitchToLogin={() => {
-                        setShowRegister(false);
-                        setShowLogin(true);
-                    }}
-                />
-            )}
-
-            {showLogin && (
-                <Login
-                    onClose={() => setShowLogin(false)}
-                    onSwitchToRegister={() => {
-                        setShowLogin(false);
-                        setShowRegister(true);
-                    }}
-                    onLoginSuccess={(username) => {
-                        setLoggedInUser(username);
-                        setShowLogin(false);
-                        router.push('/play/solo/timetrial');
-                    }}
-                />
-            )}
-
-            {showWelcome && (
-                <Welcome
-                    username={loggedInUser}
-                    onClose={() => setShowWelcome(false)}
-                    onPlayNow={() => { router.push('/play/solo/timetrial'); }}
-                    onViewRecord={() => {
-                        setShowWelcome(false);
-                        fetchScoreboard();
-                    }}
-                />
-            )}
 
             {showScoreboard && (
                 <Scoreboard

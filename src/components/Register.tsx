@@ -43,7 +43,7 @@ export default function Register({ onClose, onSwitchToLogin }: {
                 <div className="relative w-[90%] max-w-md h-[70vh] mt-[4.5rem] sm:mt-0 sm:h-[50vh] bg-[#4C6377]/90 rounded-[30px] shadow-xl px-6 py-8 animate-slide-up sm:animate-none flex flex-col justify-center items-center pointer-events-auto">
 
                     <div>
-                        <h2 className="text-5xl text-center mb-20">WELCOME!</h2>
+                        <h2 className="text-5xl text-center text-white mb-20">WELCOME!</h2>
                         <div className="w-full">
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <input
@@ -73,7 +73,7 @@ export default function Register({ onClose, onSwitchToLogin }: {
                         </div>
                     </div>
 
-                    <p className="text-center text-sm mt-6">
+                    <p className="text-center text-white text-sm mt-6">
                         ALREADY HAVE AN ACCOUNT?{' '}
                         <button
                             onClick={onSwitchToLogin}

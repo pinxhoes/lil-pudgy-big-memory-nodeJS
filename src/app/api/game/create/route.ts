@@ -1,4 +1,3 @@
-import { prisma } from '@lib/db';
 import { NextResponse } from 'next/server';
 
 function generateShuffledDeck(size = 48): number[] {
@@ -15,44 +14,14 @@ function generateShuffledDeck(size = 48): number[] {
 }
 
 export async function POST(req: Request) {
-    const body = await req.json();
-    const { mode, player1Id, player2Id, gridSize = 48 } = body;
-
-    console.log('[POST] /api/game/create body:', body);
-
-    if (!mode || !player1Id) {
-        return NextResponse.json({ message: 'Invalid game data' }, { status: 400 });
-    }
-
     try {
-        // 👇 Ensure guest user exists
-        const player1 = await prisma.user.upsert({
-            where: { username: player1Id },
-            update: {},
-            create: {
-                username: player1Id,
-                password: 'guest',
-            },
-        });
+        const { gridSize = 48 } = await req.json();
 
         const shuffledDeck = generateShuffledDeck(gridSize);
-        console.log('[POST] Generated deck:', shuffledDeck);
 
-        const game = await prisma.game.create({
-            data: {
-                mode,
-                player1Id: player1.id, // 🧠 Use upserted user's actual ID
-                player2Id: mode === 'multiplayer' ? player2Id : null,
-                deck: shuffledDeck,
-                revealed: [],
-                turn: 1,
-                status: 'active',
-            },
-        });
-
-        return NextResponse.json({ game }, { status: 201 });
+        return NextResponse.json({ deck: shuffledDeck }, { status: 200 });
     } catch (error) {
-        console.error('[Game] Failed to create game:', error);
+        console.error('[Create Deck Error]', error);
         return NextResponse.json({ message: 'Server error' }, { status: 500 });
     }
 }
