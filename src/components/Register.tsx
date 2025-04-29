@@ -52,6 +52,7 @@ export default function Register({ onClose, onSwitchToLogin }: {
                                 <input
                                     type="text"
                                     value={username}
+                                    maxLength={10}
                                     onChange={(e) => setUsername(e.target.value)}
                                     placeholder="Enter your username"
                                     className="w-full rounded-full px-4 py-2 text-blue-950 bg-amber-50 placeholder:text-sm placeholder:font-bold"

@@ -40,15 +40,18 @@ export default function Scoreboard({
           animate-slide-up sm:animate-none flex flex-col items-center pointer-events-auto overflow-hidden">
 
                     {/* Title */}
-                    <h2 className="text-5xl text-center mb-6 font-wedges text-white">
-                        SCOREBOARD
-                    </h2>
+                    <div className="pt-6 px-6 pb-4 text-center relative">
+                        <h2 className="text-4xl mb-4 text-white">
+                            LEADERBOARD
+                        </h2>
+                    </div>
+
 
                     {/* Scrollable list */}
                     <div className="flex flex-col w-full gap-2 overflow-y-auto px-1 scrollbar-thin scrollbar-thumb-[#fcd34d] scrollbar-track-transparent rounded-lg max-h-[40vh]">
                         {scoreboardData.map((entry, index) => {
                             const isTop = index === 0;
-                            const isCurrentUser = entry.username === currentUsername;
+                            const isCurrentUser = entry.username.toLowerCase() === currentUsername?.toLowerCase();
                             const bgColor = isTop
                                 ? '#E8C77A'
                                 : isCurrentUser
@@ -72,8 +75,16 @@ export default function Scoreboard({
                                             height={32}
                                             className="rounded-full"
                                         />
-                                        <span className={`${isTop || isCurrentUser ? 'text-white' : 'text-[#4C6377]'} font-bold uppercase`}>
-                                            {entry.username}
+                                        <span
+                                            className={`${isTop || isCurrentUser ? 'text-white' : 'text-[#4C6377]'} font-bold uppercase sm:whitespace-nowrap sm:max-w-none truncate max-w-[7ch]`}
+                                            title={entry.username}
+                                        >
+                                            <span className="block sm:hidden">
+                                                {entry.username.length > 7 ? `${entry.username.slice(0, 4)}...` : entry.username}
+                                            </span>
+                                            <span className="hidden sm:block">
+                                                {entry.username}
+                                            </span>
                                         </span>
                                     </div>
                                     <span className={`${isTop || isCurrentUser ? 'text-white' : 'text-[#4C6377]'} font-bold`}>
@@ -100,7 +111,7 @@ export default function Scoreboard({
                     {/* Close button */}
                     <button
                         onClick={onClose}
-                        className="absolute top-2 right-4 text-5xl drop-shadow-md font-bold text-white z-10 transition-transform duration-150 hover:scale-125 active:scale-90"
+                        className="absolute top-4 right-4 text-5xl drop-shadow-md font-bold text-white z-10 transition-transform duration-150 hover:scale-125 active:scale-90"
                     >
                         ×
                     </button>
