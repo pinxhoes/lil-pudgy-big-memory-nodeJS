@@ -67,7 +67,7 @@ const Header = forwardRef<HTMLElement>((_, ref) => {
                                     }}
                                     className="block w-full text-left px-6 py-4 text-[#00142d] font-wedges text-lg hover:bg-gray-100 transition"
                                 >
-                                    Scoreboard
+                                    Leaderboard
                                 </button>
                                 <button
                                     onClick={() => {

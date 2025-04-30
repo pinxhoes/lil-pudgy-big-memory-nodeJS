@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Loading from '../Loading';
+import Scoreboard from '../Scoreboard';
 import './Card.css';
 
 type GameBoardTimetrialProps = {
@@ -34,6 +35,9 @@ export default function GameBoardTimetrial({
     const [gameResult, setGameResult] = useState<'' | 'win' | 'lose'>('');
     const [bestTime, setBestTime] = useState<number | null>(null);
     const timerIdRef = useRef<NodeJS.Timeout | null>(null);
+    const [showScoreboard, setShowScoreboard] = useState(false);
+    const [scoreboardData, setScoreboardData] = useState<ScoreEntry[]>([]);
+    const [isTimerRunning, setIsTimerRunning] = useState(false);
 
     useEffect(() => {
         if (!initialCards || initialCards.length === 0) {
@@ -102,6 +106,7 @@ export default function GameBoardTimetrial({
             const now = Date.now();
             setStartTime(now);
             setElapsedTime(0);
+            setIsTimerRunning(true);
 
             const timer = setInterval(() => {
                 setElapsedTime(Date.now() - now);
@@ -160,6 +165,7 @@ export default function GameBoardTimetrial({
                 if (timerIdRef.current) {
                     clearInterval(timerIdRef.current);
                     timerIdRef.current = null;
+                    setIsTimerRunning(false);
                 }
 
                 const finalTime = Date.now() - startTime;
@@ -211,6 +217,17 @@ export default function GameBoardTimetrial({
         }
     };
 
+    const openScoreboard = async () => {
+        try {
+            const res = await fetch('/api/scoreboard');
+            const data = await res.json();
+            setScoreboardData(data);
+            setShowScoreboard(true);
+        } catch (error) {
+            console.error('Error opening scoreboard:', error);
+        }
+    };
+
     return (
         <div className="min-h-[100dvh] bg-[#80abff] flex flex-col items-center justify-start px-4 pt-8 gap-6">
             {loading && <Loading />}
@@ -225,18 +242,29 @@ export default function GameBoardTimetrial({
                     Restart Game
                 </button>
 
-                <button
-                    onClick={() => {
-                        if (timerIdRef.current) {
-                            clearInterval(timerIdRef.current);
-                            timerIdRef.current = null;
-                        }
-                    }}
-                    className="font-wedges text-xl text-white bg-gradient-to-b from-[#f87171] to-[#ef4444]
-  px-[2.5rem] py-[1rem] rounded-full shadow transition-transform duration-150 active:scale-95 hover:brightness-110"
-                >
-                    Stop Game
-                </button>
+                {isTimerRunning ? (
+                    <button
+                        onClick={() => {
+                            if (timerIdRef.current) {
+                                clearInterval(timerIdRef.current);
+                                timerIdRef.current = null;
+                                setIsTimerRunning(false);
+                            }
+                        }}
+                        className="font-wedges text-xl text-white bg-gradient-to-b from-[#f87171] to-[#ef4444]
+        px-[2.5rem] py-[1rem] rounded-full shadow transition-transform duration-150 active:scale-95 hover:brightness-110"
+                    >
+                        Stop Game
+                    </button>
+                ) : (
+                    <button
+                        onClick={openScoreboard}
+                        className="font-wedges text-xl text-white bg-gradient-to-b from-[#597ab0] to-[#00142D]
+        px-[2.5rem] py-[1rem] rounded-full shadow transition-transform duration-150 active:scale-95 hover:brightness-110"
+                    >
+                        Leaderboard
+                    </button>
+                )}
             </div>
 
             {/* Timers */}
@@ -282,6 +310,13 @@ export default function GameBoardTimetrial({
                     );
                 })}
             </div>
+            {showScoreboard && (
+                <Scoreboard
+                    onClose={() => setShowScoreboard(false)}
+                    currentUsername={username}
+                    scoreboardData={scoreboardData}
+                />
+            )}
         </div>
     );
 }

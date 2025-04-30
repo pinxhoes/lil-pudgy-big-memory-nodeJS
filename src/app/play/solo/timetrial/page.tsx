@@ -1,17 +1,21 @@
 'use client';
 
 import GameBoardTimetrial from '@/components/GameBoard/GameBoardTimetrial';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function GameTimeTrial() {
     const [username, setUsername] = useState<string>('');
+    const router = useRouter();
 
     useEffect(() => {
         const storedUser = localStorage.getItem('loggedInUser');
         if (storedUser) {
             setUsername(storedUser);
+        } else {
+            router.replace('/')
         }
-    }, []);
+    }, [router]);
 
     return (
         <main className="min-h-[100dvh] bg-[#80abff] flex flex-col items-center justify-start pt-8 px-4">
