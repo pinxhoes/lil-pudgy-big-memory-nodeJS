@@ -4,8 +4,8 @@ import { wedges } from './fonts';
 import './globals.css';
 
 export const metadata = {
-  title: 'Memory Game',
-  description: 'Web3 Memory Game with Wallet Login',
+  title: 'Lil Pudgy Big Memory',
+  description: 'Welcome to Stoopid World. A digital playground for curious minds and chaotic fun.',
 };
 
 export default function RootLayout({
@@ -25,6 +25,7 @@ export default function RootLayout({
           type="font/ttf"
           crossOrigin="anonymous"
         />
+        <link rel="icon" type="image/svg+xml" href="/img/pinguLogo.svg" />
       </head>
       <body className="bg-[#80abff] font-wedges ">
         <ClientLayout>{children}</ClientLayout>
