@@ -7,7 +7,6 @@ import Scoreboard from '../Scoreboard';
 import './Card.css';
 
 type GameBoardTimetrialProps = {
-    cards?: number[];
     username: string;
     gridSize: number;
 };
@@ -18,11 +17,11 @@ type ScoreEntry = {
 };
 
 export default function GameBoardTimetrial({
-    cards: initialCards,
+
     username,
     gridSize,
 }: GameBoardTimetrialProps) {
-    const [cards, setCards] = useState<number[]>(initialCards ?? []);
+    const [cards, setCards] = useState<number[]>([]);
     const [flippedCards, setFlippedCards] = useState<number[]>([]);
     const [matchedCards, setMatchedCards] = useState<Set<number>>(new Set());
     const [disabled, setDisabled] = useState(false);
@@ -39,40 +38,32 @@ export default function GameBoardTimetrial({
     const [scoreboardData, setScoreboardData] = useState<ScoreEntry[]>([]);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
 
+
     useEffect(() => {
-        if (!initialCards || initialCards.length === 0) {
-            if (!username) return;
+        const createNewGame = async () => {
+            setLoading(true);
+            try {
+                const res = await fetch('/api/game/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ gridSize, username, mode: 'timetrial' }),
+                });
 
-            const createNewGame = async () => {
-                setLoading(true);
-                try {
-                    const res = await fetch('/api/game/create', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ gridSize, username, mode: 'timetrial' }),
-                    });
+                const data = await res.json();
 
-                    const data = await res.json();
-
-                    if (res.ok) {
-                        if (data.deck) {
-                            setCards(data.deck);
-                        } else if (data.game?.deck) {
-                            setCards(data.game.deck);
-                        } else {
-                            console.error('[Initial Game] Invalid deck structure:', data);
-                        }
-                    }
-                } catch (error) {
-                    console.error('[Initial Game Error]:', error);
-                } finally {
-                    setLoading(false);
+                if (res.ok && data.success) {
+                    const dummyDeck = Array(gridSize).fill(0);
+                    setCards(dummyDeck);
                 }
-            };
+            } catch (error) {
+                console.error('[Initial Game Error]:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-            createNewGame();
-        }
-    }, [initialCards, username, gridSize]);
+        if (username) createNewGame();
+    }, [gridSize, username]);
 
     useEffect(() => {
         const updateLayout = () => {
@@ -98,8 +89,7 @@ export default function GameBoardTimetrial({
     }, [cards.length]);
 
     const handleFlip = useCallback((index: number) => {
-        if (disabled) return;
-        if (flippedCards.includes(index) || matchedCards.has(index)) return;
+        if (disabled || flippedCards.includes(index) || matchedCards.has(index)) return;
 
         const isFirstClick = flippedCards.length === 0 && matchedCards.size === 0;
         if (isFirstClick && startTime === null) {
@@ -113,24 +103,33 @@ export default function GameBoardTimetrial({
             }, 100);
 
             timerIdRef.current = timer;
-
-            window.addEventListener('beforeunload', () => {
-                if (timerIdRef.current) clearInterval(timerIdRef.current);
-            });
         }
 
         const newFlipped = [...flippedCards, index];
         setFlippedCards(newFlipped);
 
-        if (newFlipped.length === 2) {
-            setDisabled(true);
-        }
+        if (newFlipped.length === 2) setDisabled(true);
     }, [disabled, flippedCards, matchedCards, startTime]);
+
+    useEffect(() => {
+        const handleBeforeUnload = () => {
+            if (timerIdRef.current) {
+                clearInterval(timerIdRef.current);
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, []);
 
     useEffect(() => {
         if (flippedCards.length === 2) {
             const [i1, i2] = flippedCards;
-            const isMatch = cards[i1] === cards[i2];
+            const pairSize = gridSize / 2;
+            const isMatch = i1 % pairSize === i2 % pairSize;
 
             setTimeout(() => {
                 if (isMatch) {
@@ -140,7 +139,7 @@ export default function GameBoardTimetrial({
                 setDisabled(false);
             }, 800);
         }
-    }, [flippedCards, cards]);
+    }, [flippedCards, gridSize]);
 
     useEffect(() => {
         const fetchBestTime = async () => {
@@ -205,7 +204,6 @@ export default function GameBoardTimetrial({
             });
 
             const data = await res.json();
-            console.log('[Submit response]', data);
 
             if (!res.ok) {
                 console.error('Failed to submit score:', data.message);
@@ -287,7 +285,8 @@ export default function GameBoardTimetrial({
                     gridTemplateColumns: `repeat(${columns}, ${cardSize}px)`,
                 }}
             >
-                {cards.map((value, i) => {
+                {cards.map((_, i) => {
+                    const imageNumber = i % (gridSize / 2);
                     const isFlipped = flippedCards.includes(i) || matchedCards.has(i);
                     return (
                         <div
@@ -300,8 +299,8 @@ export default function GameBoardTimetrial({
                             }}
                         >
                             <Image
-                                src={isFlipped ? `/cards/${value}.svg` : '/img/gameLogo.svg'}
-                                alt={isFlipped ? `penguin ${value}` : 'card back'}
+                                src={isFlipped ? `/cards/${imageNumber}.svg` : '/img/gameLogo.svg'}
+                                alt={isFlipped ? `penguin ${imageNumber}` : 'card back'}
                                 width={cardSize}
                                 height={cardSize}
                                 className="w-[90%] h-[90%] object-contain"

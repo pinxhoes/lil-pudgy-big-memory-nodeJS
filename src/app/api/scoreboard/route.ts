@@ -8,10 +8,10 @@ export async function GET() {
                 user: {
                     select: { username: true },
                 },
-                time: true,
+                durationMs: true,
             },
             orderBy: {
-                time: 'asc',
+                durationMs: 'asc',
             },
         });
 
@@ -20,7 +20,7 @@ export async function GET() {
         for (const game of games) {
             const username = game.user.username;
             if (!bestTimePerUser.has(username)) {
-                bestTimePerUser.set(username, { username, time: game.time });
+                bestTimePerUser.set(username, { username, time: game.durationMs });
             }
         }
 
@@ -32,3 +32,4 @@ export async function GET() {
         return NextResponse.json({ message: 'Failed to fetch scoreboard' }, { status: 500 });
     }
 }
+

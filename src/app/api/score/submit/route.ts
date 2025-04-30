@@ -21,8 +21,10 @@ export async function POST(req: Request) {
         // Create finished game record
         await prisma.game.create({
             data: {
-                time,
+                durationMs: time,
                 userId: user.id,
+                mode: 'timetrial',
+                deck: [],
             },
         });
 

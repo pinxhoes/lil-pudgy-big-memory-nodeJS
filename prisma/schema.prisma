@@ -24,9 +24,11 @@ model User {
 }
 
 model Game {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
-  time      Int      
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  durationMs  Int
+  deck        Json
+  mode        String
 }
