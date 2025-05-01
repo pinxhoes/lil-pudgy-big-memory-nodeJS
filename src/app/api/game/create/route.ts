@@ -34,3 +34,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ message: 'Server error' }, { status: 500 });
     }
 }
+
+export async function GET() {
+    return NextResponse.json({ message: 'GET not allowed' }, { status: 405 });
+}

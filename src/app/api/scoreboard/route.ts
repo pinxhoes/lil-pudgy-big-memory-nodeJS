@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 export async function GET() {
     try {
         const games = await prisma.game.findMany({
+            where: { mode: 'timetrial' },
             select: {
                 user: {
                     select: { username: true },
@@ -24,9 +25,7 @@ export async function GET() {
             }
         }
 
-        const scoreboard = Array.from(bestTimePerUser.values());
-
-        return NextResponse.json(scoreboard);
+        return NextResponse.json(Array.from(bestTimePerUser.values()));
     } catch (error) {
         console.error('Error building scoreboard:', error);
         return NextResponse.json({ message: 'Failed to fetch scoreboard' }, { status: 500 });

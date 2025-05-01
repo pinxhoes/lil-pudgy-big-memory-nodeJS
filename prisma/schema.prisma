@@ -28,7 +28,13 @@ model Game {
   userId      String
   user        User     @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())
-  durationMs  Int
+  durationMs  Int?
   deck        Json
-  mode        String
+  mode        GameMode
+}
+
+enum GameMode {
+  solo
+  timetrial
+  multiplayer
 }
