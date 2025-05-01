@@ -1,3 +1,4 @@
+import { AuthProvider } from '@/app/providers/AuthProvider';
 import ClientLayout from '@/components/ClientLayout';
 import { Toaster } from 'react-hot-toast';
 import { wedges } from './fonts';
@@ -28,7 +29,9 @@ export default function RootLayout({
         <link rel="icon" type="image/svg+xml" href="/img/pinguLogo.svg" />
       </head>
       <body className="bg-[#80abff] font-wedges ">
-        <ClientLayout>{children}</ClientLayout>
+        <AuthProvider>
+          <ClientLayout>{children}</ClientLayout>
+        </AuthProvider>
         <Toaster position="top-center" />
       </body>
     </html>

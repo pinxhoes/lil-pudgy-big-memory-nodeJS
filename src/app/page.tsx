@@ -1,9 +1,9 @@
 'use client'
 
-//import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 export default function LandingPage() {
-  //const router = useRouter()
+  const router = useRouter()
 
   return (
     <main className="bg-[#80abff] min-h-screen flex items-center justify-center text-center px-4 text-[#00142d]">
@@ -12,11 +12,9 @@ export default function LandingPage() {
           Lil Pudgy Big Memory
         </h1>
 
-        <p className="mt-10 font-wedges text-lg md:text-2xl">
+        {/* <p className="mt-10 font-wedges text-lg md:text-2xl">
           🚧 Under Construction — We will be back soon!🚧
-        </p>
-
-        {/* 
+        </p> */}
 
         <button
           onClick={() => router.push('/play')}
@@ -26,7 +24,7 @@ export default function LandingPage() {
         >
           Play Now
         </button>
-        */}
+
       </div>
     </main>
   )

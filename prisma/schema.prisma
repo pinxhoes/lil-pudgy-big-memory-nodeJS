@@ -15,22 +15,44 @@ datasource db {
 
 model User {
   id        String   @id @default(uuid())
-  username  String   @unique
-  password  String   @unique
+  username  String?  @unique
+  password  String?  
   email     String?  @unique
+  wallet    String?  @unique 
   createdAt DateTime @default(now())
 
   scores    Game[]
 }
 
 model Game {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  createdAt   DateTime @default(now())
-  durationMs  Int?
-  deck        Json
-  mode        GameMode
+  id             String   @id @default(cuid())
+  userId         String?
+  user           User?    @relation(fields: [userId], references: [id])
+  createdAt      DateTime @default(now())
+  durationMs     Int?
+
+  mode           GameMode
+  boardSize      String   
+  chainGameId    String?  @unique 
+  isOnChain      Boolean  @default(false) 
+
+  cards          Card[]
+}
+
+model Card {
+  id        String   @id @default(uuid())
+  gameId    String
+  game      Game     @relation(fields: [gameId], references: [id])
+  position  Int
+  imageId   Int     
+  flipped   Boolean  @default(false)
+  matched   Boolean  @default(false)
+}
+
+model CardTemplate {
+  id        Int      @id 
+  name      String?  
+  imageUrl  String  
 }
 
 enum GameMode {

@@ -1,31 +1,42 @@
 import { prisma } from "@/app/lib/db";
 
 async function main() {
-    // Step 1: Find or create guest user
-    let guestUser = await prisma.user.findUnique({
-        where: { username: 'guest' },
+    let totalDeleted = 0;
+
+    // 1. 🧼 Delete orphan solo games (no userId)
+    const soloResult = await prisma.game.deleteMany({
+        where: {
+            mode: 'solo',
+            userId: null,
+        },
     });
+    console.log(`✅ Deleted ${soloResult.count} solo games without user.`);
+    totalDeleted += soloResult.count;
 
-    if (!guestUser) {
-        console.log('⚠️ Guest user not found. Creating one...');
-        guestUser = await prisma.user.create({
-            data: {
-                username: 'guest',
-                password: 'guest', // or any placeholder password
-            },
-        });
-        console.log('✅ Guest user created.');
-    }
-
-    // Step 2: Delete all games by guest user
-    const result = await prisma.game.deleteMany({
-        where: { userId: guestUser.id },
+    // 2. 🕰️ Delete time trial games older than 30 days
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const oldTTResult = await prisma.game.deleteMany({
+        where: {
+            mode: 'timetrial',
+            createdAt: { lt: thirtyDaysAgo },
+        },
     });
+    console.log(`✅ Deleted ${oldTTResult.count} old Time Trial games.`);
+    totalDeleted += oldTTResult.count;
 
-    console.log(`✅ Deleted ${result.count} guest games.`);
+    // 3. 🚫 Delete any game with durationMs = 0 (incomplete)
+    const incompleteResult = await prisma.game.deleteMany({
+        where: {
+            durationMs: 0,
+        },
+    });
+    console.log(`✅ Deleted ${incompleteResult.count} incomplete games (duration = 0).`);
+    totalDeleted += incompleteResult.count;
+
+    console.log(`✨ Total cleaned up: ${totalDeleted} games.`);
 }
 
 main().catch((e) => {
-    console.error(e);
+    console.error('❌ Cleanup failed:', e);
     process.exit(1);
 });

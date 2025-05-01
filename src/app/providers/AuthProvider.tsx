@@ -17,6 +17,7 @@ interface AuthContextType {
     closeAllModals: () => void;
     openScoreboard: () => void;
     logout: () => void;
+    handleLoginSuccess: (username: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -86,7 +87,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 openWelcome,
                 closeAllModals,
                 openScoreboard,
-                logout
+                logout,
+                handleLoginSuccess,
             }}
         >
             {children}

@@ -5,8 +5,8 @@ import { NextResponse } from 'next/server';
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        let { username } = body;
         const { password } = body;
+        let { username } = body;
 
         if (!username || !password) {
             return NextResponse.json({ error: 'Missing username or password' }, { status: 400 });
@@ -14,7 +14,8 @@ export async function POST(req: Request) {
 
         username = username.toLowerCase();
 
-        if (!/^[a-z0-9_]{3,20}$/.test(username)) {
+        const usernamePattern = /^[a-z0-9_]{3,20}$/;
+        if (!usernamePattern.test(username)) {
             return NextResponse.json({ error: 'Invalid username format' }, { status: 400 });
         }
 
