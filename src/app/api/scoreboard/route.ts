@@ -20,8 +20,8 @@ export async function GET() {
 
         for (const game of games) {
             const username = game.user.username;
-            if (!bestTimePerUser.has(username)) {
-                bestTimePerUser.set(username, { username, time: game.durationMs });
+            if (!bestTimePerUser.has(username) && game.durationMs !== null) {
+                bestTimePerUser.set(username, { username, time: game.durationMs })
             }
         }
 
