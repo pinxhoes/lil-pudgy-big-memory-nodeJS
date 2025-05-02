@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { gridSize = 48, username, mode = 'timetrial' } = body;
+        const { gridSize = 48, username } = body;
 
         if (!username) {
             return NextResponse.json({ message: 'Missing username' }, { status: 400 });
@@ -17,18 +17,34 @@ export async function POST(req: Request) {
             return NextResponse.json({ message: 'User not found' }, { status: 404 });
         }
 
-        const deck = generateShuffledDeck(gridSize);
+        const boardSize = '6x8'; // default board size for time trial mode
+        const pairCount = gridSize / 2;
+        const deck = await generateShuffledDeck(pairCount);
 
         const game = await prisma.game.create({
             data: {
-                userId: user.id,
-                deck,
-                mode,
+                mode: 'timetrial',
+                boardSize,
                 durationMs: 0,
+                userId: user.id,
+                cards: {
+                    create: deck.map((template, index) => ({
+                        position: index,
+                        imageId: template.id,
+                        flipped: false,
+                        matched: false,
+                    })),
+                },
             },
         });
 
-        return NextResponse.json({ gameId: game.id }, { status: 200 });
+        const cards = await prisma.card.findMany({
+            where: { gameId: game.id },
+            orderBy: { position: 'asc' },
+            select: { id: true, position: true },
+        });
+
+        return NextResponse.json({ gameId: game.id, cards }, { status: 200 });
     } catch (error) {
         console.error('[Create Game Error]', error);
         return NextResponse.json({ message: 'Server error' }, { status: 500 });

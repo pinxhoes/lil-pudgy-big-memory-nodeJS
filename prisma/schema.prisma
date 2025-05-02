@@ -40,19 +40,21 @@ model Game {
 }
 
 model Card {
-  id        String   @id @default(uuid())
+  id        String        @id @default(uuid())
   gameId    String
-  game      Game     @relation(fields: [gameId], references: [id])
+  game      Game          @relation(fields: [gameId], references: [id])
   position  Int
-  imageId   Int     
-  flipped   Boolean  @default(false)
-  matched   Boolean  @default(false)
+  imageId   Int   
+  image     CardTemplate  @relation(fields: [imageId], references: [id])  
+  flipped   Boolean       @default(false)
+  matched   Boolean       @default(false)
 }
 
 model CardTemplate {
   id        Int      @id 
   name      String?  
   imageUrl  String  
+  cards     Card[]
 }
 
 enum GameMode {

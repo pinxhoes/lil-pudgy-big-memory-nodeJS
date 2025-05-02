@@ -3,5 +3,5 @@
 import GameBoardSolo from '@/components/GameBoard/GameBoardSolo';
 
 export default function Game3x4() {
-    return <GameBoardSolo userId="guest" gridSize={12} columns={4} rows={3} />;
+    return <GameBoardSolo gridSize={12} columns={4} rows={3} />;
 }
