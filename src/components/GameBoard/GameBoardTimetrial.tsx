@@ -1,3 +1,4 @@
+// Updated GameBoardTimetrial to fetch backend-generated cards securely
 'use client';
 
 import Image from 'next/image';
@@ -11,19 +12,22 @@ type GameBoardTimetrialProps = {
     gridSize: number;
 };
 
+type CardInfo = {
+    id: string;
+    position: number;
+};
+
 type ScoreEntry = {
     username: string;
     time: number;
 };
 
-export default function GameBoardTimetrial({
-
-    username,
-    gridSize,
-}: GameBoardTimetrialProps) {
-    const [cards, setCards] = useState<number[]>([]);
-    const [flippedCards, setFlippedCards] = useState<number[]>([]);
-    const [matchedCards, setMatchedCards] = useState<Set<number>>(new Set());
+export default function GameBoardTimetrial({ username, gridSize }: GameBoardTimetrialProps) {
+    const [cards, setCards] = useState<CardInfo[]>([]);
+    const [gameId, setGameId] = useState('');
+    const [flippedCards, setFlippedCards] = useState<string[]>([]);
+    const [matchedCards, setMatchedCards] = useState<Set<string>>(new Set());
+    const [cardImages, setCardImages] = useState<Record<string, string>>({});
     const [disabled, setDisabled] = useState(false);
     const [cardSize, setCardSize] = useState(100);
     const [columns, setColumns] = useState(8);
@@ -32,28 +36,26 @@ export default function GameBoardTimetrial({
     const [startTime, setStartTime] = useState<number | null>(null);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [gameResult, setGameResult] = useState<'' | 'win' | 'lose'>('');
-    const [bestTime, setBestTime] = useState<number | null>(null);
+    const [bestTime] = useState<number | null>(null);
     const timerIdRef = useRef<NodeJS.Timeout | null>(null);
     const [showScoreboard, setShowScoreboard] = useState(false);
     const [scoreboardData, setScoreboardData] = useState<ScoreEntry[]>([]);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
 
-
     useEffect(() => {
         const createNewGame = async () => {
             setLoading(true);
             try {
-                const res = await fetch('/api/game/create', {
+                const res = await fetch('/api/game/create/timetrial', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ gridSize, username, mode: 'timetrial' }),
+                    body: JSON.stringify({ gridSize, username }),
                 });
 
                 const data = await res.json();
-
-                if (res.ok && data.success) {
-                    const dummyDeck = Array(gridSize).fill(0);
-                    setCards(dummyDeck);
+                if (res.ok && data.cards && data.gameId) {
+                    setCards(data.cards);
+                    setGameId(data.gameId);
                 }
             } catch (error) {
                 console.error('[Initial Game Error]:', error);
@@ -88,8 +90,8 @@ export default function GameBoardTimetrial({
         return () => window.removeEventListener('resize', updateLayout);
     }, [cards.length]);
 
-    const handleFlip = useCallback((index: number) => {
-        if (disabled || flippedCards.includes(index) || matchedCards.has(index)) return;
+    const handleFlip = useCallback(async (cardId: string) => {
+        if (disabled || flippedCards.includes(cardId) || matchedCards.has(cardId)) return;
 
         const isFirstClick = flippedCards.length === 0 && matchedCards.size === 0;
         if (isFirstClick && startTime === null) {
@@ -101,93 +103,77 @@ export default function GameBoardTimetrial({
             const timer = setInterval(() => {
                 setElapsedTime(Date.now() - now);
             }, 100);
-
             timerIdRef.current = timer;
         }
 
-        const newFlipped = [...flippedCards, index];
-        setFlippedCards(newFlipped);
+        const res = await fetch('/api/card/reveal', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ gameId, cardId }),
+        });
 
-        if (newFlipped.length === 2) setDisabled(true);
-    }, [disabled, flippedCards, matchedCards, startTime]);
+        if (res.ok) {
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            setCardImages(prev => ({ ...prev, [cardId]: url }));
+            setFlippedCards(prev => [...prev, cardId]);
+        }
 
-    useEffect(() => {
-        const handleBeforeUnload = () => {
-            if (timerIdRef.current) {
-                clearInterval(timerIdRef.current);
-            }
-        };
-
-        window.addEventListener('beforeunload', handleBeforeUnload);
-
-        return () => {
-            window.removeEventListener('beforeunload', handleBeforeUnload);
-        };
-    }, []);
+        if (flippedCards.length === 1) setDisabled(true);
+    }, [disabled, flippedCards, matchedCards, startTime, gameId]);
 
     useEffect(() => {
         if (flippedCards.length === 2) {
-            const [i1, i2] = flippedCards;
-            const pairSize = gridSize / 2;
-            const isMatch = i1 % pairSize === i2 % pairSize;
+            const [id1, id2] = flippedCards;
 
-            setTimeout(() => {
+            setTimeout(async () => {
+                const res = await fetch('/api/card/match', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cardIds: [id1, id2] }),
+                });
+
+                const result = await res.json();
+                const isMatch = res.status === 200 && result.matched === true;
+
                 if (isMatch) {
-                    setMatchedCards(prev => new Set(prev).add(i1).add(i2));
+                    setMatchedCards(prev => new Set(prev).add(id1).add(id2));
+                } else {
+                    setTimeout(() => {
+                        setCardImages(prev => {
+                            const updated = { ...prev };
+                            delete updated[id1];
+                            delete updated[id2];
+                            return updated;
+                        });
+                    }, 300);
                 }
+
                 setFlippedCards([]);
                 setDisabled(false);
             }, 800);
         }
-    }, [flippedCards, gridSize]);
+    }, [flippedCards]);
 
     useEffect(() => {
-        const fetchBestTime = async () => {
-            try {
-                const res = await fetch('/api/scoreboard');
-                const data: ScoreEntry[] = await res.json();
-                if (Array.isArray(data) && data.length > 0) {
-                    const best = Math.min(...data.map((entry) => entry.time));
-                    setBestTime(best);
-                }
-            } catch (err) {
-                console.error('[BestTimeFetch] Error:', err);
+        if (matchedCards.size === cards.length && cards.length > 0 && startTime) {
+            if (timerIdRef.current) {
+                clearInterval(timerIdRef.current);
+                timerIdRef.current = null;
+                setIsTimerRunning(false);
             }
-        };
 
-        fetchBestTime();
-    }, []);
+            const finalTime = Date.now() - startTime;
+            if (username) submitScore(username, finalTime);
 
-    useEffect(() => {
-        if (matchedCards.size === cards.length && cards.length > 0) {
-            if (startTime) {
-                if (timerIdRef.current) {
-                    clearInterval(timerIdRef.current);
-                    timerIdRef.current = null;
-                    setIsTimerRunning(false);
-                }
-
-                const finalTime = Date.now() - startTime;
-
-                // Always submit the score first
-                if (username) {
-                    submitScore(username, finalTime);
-                }
-
-                // Then decide if it's a win or lose
-                if (bestTime === null || finalTime < bestTime) {
-                    setGameResult('win');
-                } else {
-                    setGameResult('lose');
-                }
-            }
+            if (bestTime === null || finalTime < bestTime) setGameResult('win');
+            else setGameResult('lose');
         }
     }, [matchedCards, cards, startTime, bestTime, username]);
 
     const formatTime = (ms: number) => {
         const totalSeconds = Math.floor(ms / 1000);
         const milliseconds = Math.floor((ms % 1000) / 10);
-        //const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
         const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
         const s = String(totalSeconds % 60).padStart(2, '0');
         const msFormatted = String(milliseconds).padStart(2, '0');
@@ -196,20 +182,11 @@ export default function GameBoardTimetrial({
 
     const submitScore = async (username: string, finaltime: number) => {
         try {
-            console.log('[Submitting score]', { username, finaltime });
-            const res = await fetch('/api/score/submit', {
+            await fetch('/api/score/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, time: finaltime }),
             });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                console.error('Failed to submit score:', data.message);
-            } else {
-                console.log('Score submitted successfully:', data);
-            }
         } catch (error) {
             console.error('Error submitting score:', error);
         }
@@ -231,11 +208,9 @@ export default function GameBoardTimetrial({
             {loading && <Loading />}
 
             <div className="flex flex-col items-center gap-4">
-                {/* Restart and Stop */}
                 <button
                     onClick={() => window.location.reload()}
-                    className="font-wedges text-xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b]
-                    px-[2.5rem] py-[1rem] rounded-full shadow transition-transform duration-150 active:scale-95 hover:brightness-110"
+                    className="font-wedges text-xl text-white bg-gradient-to-b from-[#fcd34d] to-[#f59e0b] px-[2.5rem] py-[1rem] rounded-full shadow transition-transform duration-150 active:scale-95 hover:brightness-110"
                 >
                     Restart Game
                 </button>
@@ -271,36 +246,29 @@ export default function GameBoardTimetrial({
                 <div>Your time: {formatTime(elapsedTime)}</div>
             </div>
 
-            {/* Result */}
             {gameResult && (
                 <div className="text-white font-wedges text-4xl mt-2">
-                    {gameResult === 'win' ? 'YOU WIN! 🎉' : 'GAME OVER 🥲'}
+                    {gameResult === 'win' ? 'NEW RECORD! 🎉' : 'FINISHED 🐧'}
                 </div>
             )}
 
-            {/* Cards Grid */}
             <div
                 className="grid gap-2 mt-4 pb-8"
-                style={{
-                    gridTemplateColumns: `repeat(${columns}, ${cardSize}px)`,
-                }}
+                style={{ gridTemplateColumns: `repeat(${columns}, ${cardSize}px)` }}
             >
-                {cards.map((_, i) => {
-                    const imageNumber = i % (gridSize / 2);
-                    const isFlipped = flippedCards.includes(i) || matchedCards.has(i);
+                {cards.map(({ id }) => {
+                    const isFlipped = flippedCards.includes(id) || matchedCards.has(id);
+                    const imageUrl = cardImages[id];
                     return (
                         <div
-                            key={i}
-                            onClick={() => handleFlip(i)}
+                            key={id}
+                            onClick={() => handleFlip(id)}
                             className="bg-green-600 border border-white flex items-center justify-center rounded-full cursor-pointer aspect-square overflow-hidden"
-                            style={{
-                                width: `${cardSize}px`,
-                                height: `${cardSize}px`,
-                            }}
+                            style={{ width: `${cardSize}px`, height: `${cardSize}px` }}
                         >
                             <Image
-                                src={isFlipped ? `/cards/${imageNumber}.svg` : '/img/gameLogo.svg'}
-                                alt={isFlipped ? `penguin ${imageNumber}` : 'card back'}
+                                src={isFlipped && imageUrl ? imageUrl : '/img/gameLogo.svg'}
+                                alt="card"
                                 width={cardSize}
                                 height={cardSize}
                                 className="w-[90%] h-[90%] object-contain"
@@ -309,6 +277,7 @@ export default function GameBoardTimetrial({
                     );
                 })}
             </div>
+
             {showScoreboard && (
                 <Scoreboard
                     onClose={() => setShowScoreboard(false)}

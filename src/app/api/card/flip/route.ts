@@ -11,6 +11,7 @@ export async function POST(req: Request) {
 
         const card = await prisma.card.findUnique({
             where: { id: cardId },
+            include: { game: true },
         });
 
         if (!card) {
@@ -23,12 +24,17 @@ export async function POST(req: Request) {
             return NextResponse.json({ message: 'Game mismatch' }, { status: 403 });
         }
 
-        await prisma.card.update({
-            where: { id: cardId },
-            data: { flipped: true },
-        });
+        const mode = card.game.mode;
+        console.log(`[Flip] Mode = ${mode} for card ${cardId}`);
 
-        return NextResponse.json({ message: 'Card flipped' }, { status: 200 });
+        if (mode === 'solo') {
+            await prisma.card.update({
+                where: { id: cardId },
+                data: { flipped: true },
+            });
+        }
+
+        return NextResponse.json({ message: 'Card flip handled' }, { status: 200 });
     } catch (error) {
         console.error('[Flip API Error]', error);
         return NextResponse.json({ message: 'Internal server error' }, { status: 500 });

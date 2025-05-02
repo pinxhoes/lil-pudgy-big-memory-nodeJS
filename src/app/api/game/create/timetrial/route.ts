@@ -17,7 +17,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ message: 'User not found' }, { status: 404 });
         }
 
-        const boardSize = '6x8'; // default board size for time trial mode
+        const boardSize = '6x8';
         const pairCount = gridSize / 2;
         const deck = await generateShuffledDeck(pairCount);
 
@@ -51,6 +51,6 @@ export async function POST(req: Request) {
     }
 }
 
-export async function GET() {
-    return NextResponse.json({ message: 'GET not allowed' }, { status: 405 });
-}
+// export async function GET() {
+//     return NextResponse.json({ message: 'GET not allowed' }, { status: 405 });
+// }

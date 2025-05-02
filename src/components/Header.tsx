@@ -3,7 +3,7 @@
 import { useAuth } from '@/app/providers/AuthProvider';
 import Image from 'next/image';
 import Link from 'next/link';
-import { forwardRef, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import DropdownMenu from './DropdownMenu';
 import Loading from './Loading';
 import Scoreboard from './Scoreboard';
@@ -31,6 +31,10 @@ const Header = forwardRef<HTMLElement>((_, ref) => {
         }
     };
 
+    useEffect(() => {
+        if (!loggedInUser) setDropdownOpen(false);
+    }, [loggedInUser]);
+
     return (
         <header
             ref={ref}
@@ -40,7 +44,7 @@ const Header = forwardRef<HTMLElement>((_, ref) => {
                 STOOPID GAME
             </Link>
 
-            {loggedInUser && (
+            {loggedInUser ? (
                 <div className="relative flex items-center gap-3">
                     <span className="text-[#00142d] font-wedges text-lg">{loggedInUser.toUpperCase()}</span>
                     <button onClick={toggleDropdown} className="focus:outline-none">
@@ -82,16 +86,9 @@ const Header = forwardRef<HTMLElement>((_, ref) => {
                         </DropdownMenu>
                     )}
                 </div>
-            )}
+            ) : null}
 
             {/* Show Scoreboard modal */}
-            {showScoreboard && (
-                <Scoreboard
-                    onClose={() => setShowScoreboard(false)}
-                    currentUsername={loggedInUser}
-                    scoreboardData={scoreboardData}
-                />
-            )}
 
             {isLoadingScoreboard && <Loading />}
             {showScoreboard && (

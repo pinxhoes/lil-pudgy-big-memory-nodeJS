@@ -1,4 +1,11 @@
 'use client';
+export { };
+
+declare global {
+    interface Window {
+        openScoreboardFromDropdown?: () => void;
+    }
+}
 
 import Login from '@/components/Login';
 import Register from '@/components/Register';
@@ -23,17 +30,32 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [loggedInUser, setLoggedInUser] = useState('');
+    const [loggedInUser, _setLoggedInUser] = useState('');
     const [showLogin, setShowLogin] = useState(false);
     const [showRegister, setShowRegister] = useState(false);
     const [showWelcome, setShowWelcome] = useState(false);
 
     useEffect(() => {
         const storedUser = localStorage.getItem('loggedInUser');
-        if (storedUser) {
-            setLoggedInUser(storedUser);
+        const loginTime = localStorage.getItem('loginTimestamp');
+        const now = Date.now();
+
+        if (storedUser && loginTime) {
+            const maxSession = 24 * 60 * 60 * 1000; // 24 hours
+            if (now - parseInt(loginTime) < maxSession) {
+                _setLoggedInUser(storedUser);
+            } else {
+                localStorage.removeItem('loggedInUser');
+                localStorage.removeItem('loginTimestamp');
+            }
         }
     }, []);
+
+    const setLoggedInUser = (username: string) => {
+        _setLoggedInUser(username);
+        localStorage.setItem('loggedInUser', username);
+        localStorage.setItem('loginTimestamp', Date.now().toString());
+    };
 
     const openLogin = () => {
         setShowLogin(true);
@@ -43,7 +65,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoggedInUser(username);
         setShowLogin(false);
         setShowWelcome(true);
-        localStorage.setItem('loggedInUser', username);
     };
 
     const openRegister = () => {
@@ -69,8 +90,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const logout = () => {
-        setLoggedInUser('');
+        _setLoggedInUser('');
         localStorage.removeItem('loggedInUser');
+        localStorage.removeItem('loginTimestamp');
         window.location.href = '/';
     };
 
@@ -137,6 +159,4 @@ export const useAuth = () => {
         throw new Error('useAuth must be used within an AuthProvider');
     }
     return context;
-}
-
-
+};
