@@ -19,9 +19,11 @@ export async function GET() {
         const bestTimePerUser = new Map<string, { username: string; time: number }>();
 
         for (const game of games) {
-            const username = game.user.username;
-            if (!bestTimePerUser.has(username) && game.durationMs !== null) {
-                bestTimePerUser.set(username, { username, time: game.durationMs })
+            const username = game.user?.username ?? null;
+            const time = game.durationMs;
+
+            if (username && time !== null && !bestTimePerUser.has(username)) {
+                bestTimePerUser.set(username, { username, time });
             }
         }
 
@@ -31,4 +33,3 @@ export async function GET() {
         return NextResponse.json({ message: 'Failed to fetch scoreboard' }, { status: 500 });
     }
 }
-

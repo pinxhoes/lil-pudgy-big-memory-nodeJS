@@ -24,8 +24,11 @@ export async function POST(req: Request) {
             return NextResponse.json({ message: 'Game mismatch' }, { status: 403 });
         }
 
-        if (!card.flipped && !card.matched) {
-            return NextResponse.json({ message: 'Card not revealed yet' }, { status: 403 });
+        if (!card.flipped) {
+            await prisma.card.update({
+                where: { id: cardId },
+                data: { flipped: true },
+            });
         }
 
         if (!card.image || !card.image.imageUrl) {
