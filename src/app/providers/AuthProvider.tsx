@@ -1,5 +1,4 @@
 'use client';
-export { };
 
 declare global {
     interface Window {
@@ -10,14 +9,12 @@ declare global {
 import Login from '@/components/Login';
 import Register from '@/components/Register';
 import Welcome from '@/components/Welcome';
+import { useRouter } from 'next/navigation';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 interface AuthContextType {
     loggedInUser: string;
     setLoggedInUser: (user: string) => void;
-    showLogin: boolean;
-    showRegister: boolean;
-    showWelcome: boolean;
     openLogin: () => void;
     openRegister: () => void;
     openWelcome: () => void;
@@ -30,41 +27,33 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [loggedInUser, _setLoggedInUser] = useState('');
+    const [loggedInUser, setLoggedInUserState] = useState('');
     const [showLogin, setShowLogin] = useState(false);
     const [showRegister, setShowRegister] = useState(false);
     const [showWelcome, setShowWelcome] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         const storedUser = localStorage.getItem('loggedInUser');
-        const loginTime = localStorage.getItem('loginTimestamp');
-        const now = Date.now();
-
-        if (storedUser && loginTime) {
-            const maxSession = 24 * 60 * 60 * 1000; // 24 hours
-            if (now - parseInt(loginTime) < maxSession) {
-                _setLoggedInUser(storedUser);
-            } else {
-                localStorage.removeItem('loggedInUser');
-                localStorage.removeItem('loginTimestamp');
-            }
+        if (storedUser) {
+            setLoggedInUserState(storedUser);
         }
     }, []);
 
     const setLoggedInUser = (username: string) => {
-        _setLoggedInUser(username);
         localStorage.setItem('loggedInUser', username);
-        localStorage.setItem('loginTimestamp', Date.now().toString());
-    };
-
-    const openLogin = () => {
-        setShowLogin(true);
+        setLoggedInUserState(username);
     };
 
     const handleLoginSuccess = (username: string) => {
         setLoggedInUser(username);
         setShowLogin(false);
         setShowWelcome(true);
+    };
+
+    const openLogin = () => {
+        closeAllModals();
+        setShowLogin(true);
     };
 
     const openRegister = () => {
@@ -90,9 +79,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const logout = () => {
-        _setLoggedInUser('');
         localStorage.removeItem('loggedInUser');
-        localStorage.removeItem('loginTimestamp');
+        setLoggedInUserState('');
         window.location.href = '/';
     };
 
@@ -101,9 +89,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             value={{
                 loggedInUser,
                 setLoggedInUser,
-                showLogin,
-                showRegister,
-                showWelcome,
                 openLogin,
                 openRegister,
                 openWelcome,
@@ -118,10 +103,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             {showLogin && (
                 <Login
                     onClose={() => setShowLogin(false)}
-                    onSwitchToRegister={() => {
-                        setShowLogin(false);
-                        setShowRegister(true);
-                    }}
+                    onSwitchToRegister={openRegister}
                     onLoginSuccess={handleLoginSuccess}
                 />
             )}
@@ -129,10 +111,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             {showRegister && (
                 <Register
                     onClose={() => setShowRegister(false)}
-                    onSwitchToLogin={() => {
-                        setShowRegister(false);
-                        setShowLogin(true);
-                    }}
+                    onSwitchToLogin={openLogin}
                 />
             )}
 
@@ -141,10 +120,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     username={loggedInUser}
                     onClose={() => setShowWelcome(false)}
                     onPlayNow={() => {
-                        window.location.href = '/play/solo/timetrial';
+                        router.push('/play/timetrial');
+                        setShowWelcome(false);
                     }}
                     onViewRecord={() => {
-                        window.openScoreboardFromDropdown?.();
+                        openScoreboard();
                         setShowWelcome(false);
                     }}
                 />
@@ -155,8 +135,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider');
-    }
+    if (!context) throw new Error('useAuth must be used within an AuthProvider');
     return context;
 };

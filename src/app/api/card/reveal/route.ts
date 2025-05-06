@@ -13,15 +13,11 @@ export async function POST(req: Request) {
 
         const card = await prisma.card.findUnique({
             where: { id: cardId },
-            include: { game: true, image: true }, // includes CardTemplate
+            include: { game: true, image: true },
         });
 
-        if (!card) {
-            return NextResponse.json({ message: 'Card not found' }, { status: 404 });
-        }
-
-        if (card.gameId !== gameId) {
-            return NextResponse.json({ message: 'Game mismatch' }, { status: 403 });
+        if (!card || card.gameId !== gameId) {
+            return NextResponse.json({ message: 'Invalid card or game' }, { status: 403 });
         }
 
         if (!card.flipped) {
@@ -29,10 +25,6 @@ export async function POST(req: Request) {
                 where: { id: cardId },
                 data: { flipped: true },
             });
-        }
-
-        if (!card.image || !card.image.imageUrl) {
-            return NextResponse.json({ message: 'Image not found' }, { status: 404 });
         }
 
         const imagePath = path.join(process.cwd(), 'public', card.image.imageUrl);
@@ -47,6 +39,6 @@ export async function POST(req: Request) {
         });
     } catch (error) {
         console.error('[Reveal API Error]', error);
-        return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({ message: 'Server error' }, { status: 500 });
     }
 }

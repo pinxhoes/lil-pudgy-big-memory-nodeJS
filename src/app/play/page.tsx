@@ -1,9 +1,9 @@
 'use client';
 
 import { useAuth } from '@/app/providers/AuthProvider';
-import Login from '@/components/Login';
-import Register from '@/components/Register';
-import Welcome from '@/components/Welcome';
+// import Login from '@/components/Login';
+// import Register from '@/components/Register';
+// import Welcome from '@/components/Welcome';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -12,10 +12,10 @@ export default function Play() {
     const { loggedInUser, openLogin } = useAuth();
 
     const [mode, setMode] = useState<'multiplayer' | null>(null);
-    const [showLogin, setShowLogin] = useState(false);
-    const [showRegister, setShowRegister] = useState(false);
-    const [showWelcome, setShowWelcome] = useState(false);
-    const [username, setUsername] = useState('');
+    // const [showLogin, setShowLogin] = useState(false);
+    // const [showRegister, setShowRegister] = useState(false);
+    // const [showWelcome, setShowWelcome] = useState(false);
+    // const [username, setUsername] = useState('');
 
     const handleTimetrialClick = () => {
         if (!loggedInUser) {
@@ -72,7 +72,7 @@ export default function Play() {
                 )}
             </div>
 
-            {showLogin && (
+            {/* {showLogin && (
                 <Login
                     onClose={() => setShowLogin(false)}
                     onSwitchToRegister={() => {
@@ -107,7 +107,7 @@ export default function Play() {
 
                     }}
                 />
-            )}
+            )} */}
         </main>
     );
 }

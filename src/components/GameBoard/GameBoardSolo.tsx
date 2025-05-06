@@ -81,11 +81,11 @@ export default function GameBoardSolo({
             )
                 return;
 
-            await fetch('/api/card/flip', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ gameId, cardId }),
-            });
+            // await fetch('/api/card/flip', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ gameId, cardId }),
+            // });
 
             const res = await fetch('/api/card/reveal', {
                 method: 'POST',
@@ -169,8 +169,13 @@ export default function GameBoardSolo({
 
         const [c1, c2] = available.sort(() => 0.5 - Math.random()).slice(0, 2);
         setDisabled(true);
-        setTimeout(() => handleFlip(c1.id), 400);
-        setTimeout(() => handleFlip(c2.id), 400);
+
+        setTimeout(() => {
+            handleFlip(c1.id);
+            setTimeout(() => {
+                handleFlip(c2.id);
+            }, 600); // delay between card 1 and 2
+        }, 400);
     }, [turnTrigger, currentPlayer, flippedCards, disabled, matchedCards, cards, handleFlip]);
 
     useEffect(() => {

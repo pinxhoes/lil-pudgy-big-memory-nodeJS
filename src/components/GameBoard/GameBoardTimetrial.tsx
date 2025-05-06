@@ -36,7 +36,7 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
     const [startTime, setStartTime] = useState<number | null>(null);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [gameResult, setGameResult] = useState<'' | 'win' | 'lose'>('');
-    const [bestTime] = useState<number | null>(null);
+    const [bestTime, setBestTime] = useState<number | null>(null);
     const timerIdRef = useRef<NodeJS.Timeout | null>(null);
     const [showScoreboard, setShowScoreboard] = useState(false);
     const [scoreboardData, setScoreboardData] = useState<ScoreEntry[]>([]);
@@ -56,6 +56,13 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
                 if (res.ok && data.cards && data.gameId) {
                     setCards(data.cards);
                     setGameId(data.gameId);
+                }
+                const scoreRes = await fetch('/api/scoreboard');
+                const scoreData: ScoreEntry[] = await scoreRes.json();
+
+                const myScore = scoreData.find(entry => entry.username === username);
+                if (myScore) {
+                    setBestTime(myScore.time);
                 }
             } catch (error) {
                 console.error('[Initial Game Error]:', error);
