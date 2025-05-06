@@ -40,3 +40,7 @@
 //         return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
 //     }
 // }
+
+export function GET() {
+    return new Response('Flip route is deprecated.', { status: 410 });
+}
