@@ -1,45 +1,87 @@
 # 🧠 Lil Pudgy Big Memory
 
-A 2-player memory card game (or vs CPU) built with Next.js, TailwindCSS, PostgreSQL (via Prisma), and Privy for Web3 login.
+A web-based **Memory Matching Game** built with **Next.js** (frontend) and **Node.js** (backend).  
+Supports multiple game modes with PostgreSQL storage via Prisma.
 
-## Features
+---
 
-- 🔐 Web3 Auth with [Privy](https://www.privy.io/)
-- 🧠 Memory game with 24 pairs (48 cards)
-- 🎮 Multiplayer-ready (solo mode & vs mode)
-- 🪄 Card flipping animations with CSS 3D
-- 📦 DB: PostgreSQL with Prisma ORM
-- 🌈 Fully responsive layout
-- 🧼 Clean component structure with Next.js App Router
-- 🌍 Vercel ready
+## 🎮 Game Modes
 
-## Setup
+- **Solo Player**: Play against a computer with turn-based logic.
+- **Multiplayer** _(coming soon)_: Challenge your friend in real-time.
+- **Time Trial**: Match all cards as fast as possible — your best time is recorded on a public leaderboard.
 
-### 1. Clone the repo
+---
 
-```bash
-git clone https://github.com/yourusername/lil-pudgy-big-memory.git
-cd lil-pudgy-big-memory
-```
+## 🛠 Tech Stack
 
-### 2.Install dependencies
+| Layer            | Tech                                                              |
+| ---------------- | ----------------------------------------------------------------- |
+| Frontend         | [Next.js](https://nextjs.org/)                                    |
+| Backend          | [Node.js](https://nodejs.org/), [Express](https://expressjs.com/) |
+| Database         | [PostgreSQL](https://www.postgresql.org/)                         |
+| ORM              | [Prisma](https://www.prisma.io/)                                  |
+| Frontend Hosting | [Vercel](https://vercel.com/)                                     |
+| Backend Hosting  | [Hetzner](https://www.hetzner.com/)                               |
 
+---
+
+## 🔧 Project Structure
+
+memory-game-next-nodeJS/
+├── frontend/ # Next.js frontend
+├── backend/ # Node.js + Express backend
+├── prisma/ # Shared Prisma schema
+├── .env # Environment variables (not committed)
+├── .env.example # Sample config
+├── README.md
+
+---
+
+## ⚙️ Environment Setup
+
+### 1. Configure `.env`
+
+Create a `.env` file in the **project root** (or copy from `.env.example`):
+DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DATABASE
+
+### 2. Install dependencies
+
+#### Frontend
+
+cd ..
 npm install
 
-### 3.Configure .env
+#### Backend
 
-Create a .env file based on .env.example:
-DATABASE_URL=your_database_url
-NEXT_PUBLIC_PRIVY_APP_ID=your_privy_app_id
+cd backend
+npm install
 
-### 4.Run locally
+### 3. Prisma
 
+npx prisma generate --schema=./prisma/schema.prisma
+npx prisma migrate dev --schema=./prisma/schema.prisma
+
+## 🧠 Development
+
+#### Frontend
+
+cd ..
 npm run dev
 
-### 5. Deploy
+#### Backend
 
-Deploy with Vercel and set your env vars there.
+cd backend
+npm run dev
 
-License
+## 🌍 Features
+
+Secure backend card logic: images revealed only after matching
+• Dynamic board sizing
+• Mobile-first UI with responsive grid
+• Leaderboard (Time Trial)
+• Supports real and test users
+
+## License
 
 MIT © 2025 Stoopid Penguin Labs
