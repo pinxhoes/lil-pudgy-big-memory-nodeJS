@@ -3,6 +3,10 @@ import { prisma } from "@/app/lib/db";
 async function main() {
     let totalDeleted = 0;
 
+    // 🧹 Step 0: Delete all Cards first (clean slate)
+    const cardResult = await prisma.card.deleteMany({});
+    console.log(`✅ Deleted ${cardResult.count} cards.`);
+
     // 1. 🧼 Delete orphan solo games (no userId)
     const soloResult = await prisma.game.deleteMany({
         where: {

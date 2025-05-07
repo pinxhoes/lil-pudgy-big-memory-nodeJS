@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "cleanup": "tsx scripts/cleanup.ts"
+    "cleanup": "tsx scripts/cleanup.ts",
+    "prisma:pull": "prisma db pull --schema=./prisma/schema.prisma",
+    "prisma:generate": "prisma generate --schema=./prisma/schema.prisma",
+    "studio": "prisma studio --schema=./prisma/schema.prisma"
   },
   "dependencies": {
     "@abstract-foundation/agw-client": "^1.6.2",
@@ -43,6 +46,7 @@
     "postcss": "^8.5.3",
     "prisma": "^6.7.0",
     "tailwindcss": "^4.1.4",
+    "tsx": "^4.19.4",
     "typescript": "^5"
   },
   "prisma": {
