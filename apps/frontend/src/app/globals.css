@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Wedges";
+  src: url("/fonts/Wedges.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-wedges {
+  font-family: var(--font-wedges), sans-serif;
+}
+
+body.font-wedges {
+  font-family: "Wedges", sans-serif;
+}
+
+@layer utilities {
+  @keyframes slideDown {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-down {
+    animation: slideDown 0.4s ease-out;
+  }
+
+  @keyframes slide-up {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.4s ease-out forwards;
+  }
+}

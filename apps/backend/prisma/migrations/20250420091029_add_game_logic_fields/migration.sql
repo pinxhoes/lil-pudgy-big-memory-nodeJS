@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Game" ADD COLUMN     "status" TEXT NOT NULL DEFAULT 'active',
+ADD COLUMN     "turn" INTEGER NOT NULL DEFAULT 1;
