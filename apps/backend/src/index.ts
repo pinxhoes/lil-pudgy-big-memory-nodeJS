@@ -19,9 +19,11 @@ app.get('/api/health', (_req, res) => {
     res.send('✅ Backend is running!');
 });
 
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-    console.log(`🚀 Backend server running at http://localhost:${PORT}`);
+
+
+const PORT = Number(process.env.PORT) || 4000;
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Backend server running at http://0.0.0.0:${PORT}`);
 });
 
 app.use('/api/game', gameRoutes);
