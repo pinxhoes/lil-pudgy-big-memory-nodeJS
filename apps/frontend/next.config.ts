@@ -29,11 +29,12 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: `
               default-src 'self';
-              connect-src 'self' http://localhost:4000 https://auth.privy.io https://explorer-api.walletconnect.com wss://relay.walletconnect.org https://api.mainnet.abs.xyz;frame-src https://*.privy.io;
+              connect-src 'self' http://localhost:4000 http://91.99.30.6 https://auth.privy.io https://explorer-api.walletconnect.com wss://relay.walletconnect.org https://api.mainnet.abs.xyz;
+              frame-src https://*.privy.io;
               script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ''};
               style-src 'self' 'unsafe-inline';
               img-src 'self' data: blob: https://cdn.privy.io https://walletconnect.com https://images.walletconnect.com https://auth.privy.io https://explorer-api.walletconnect.com https://api.mainnet.abs.xyz;
-`             .replace(/\s{2,}/g, ' ').trim(),
+              `.replace(/\s{2,}/g, ' ').trim(),
           },
           {
             key: 'X-Frame-Options',
