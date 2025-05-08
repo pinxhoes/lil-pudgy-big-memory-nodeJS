@@ -20,7 +20,7 @@ const Header = forwardRef<HTMLElement>((_, ref) => {
     const fetchScoreboard = async () => {
         try {
             setIsLoadingScoreboard(true);
-            const res = await fetch('/api/scoreboard');
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/scoreboard`)
             const data = await res.json();
             setScoreboardData(data);
             setShowScoreboard(true);

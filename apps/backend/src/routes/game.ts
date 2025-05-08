@@ -5,7 +5,7 @@ import { createTimetrialGame } from '../controllers/game/createTimetrial';
 const router = express.Router();
 console.log('createSoloGame type:', typeof createSoloGame);
 
-router.post('/create/solo', createSoloGame);
-router.post('/create/timetrial', createTimetrialGame);
+router.post('/createSolo', createSoloGame);
+router.post('/createTimetrial', createTimetrialGame);
 
 export default router;

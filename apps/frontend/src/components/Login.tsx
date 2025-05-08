@@ -9,24 +9,22 @@ import Loading from './Loading';
 export default function Login({
     onClose,
     onSwitchToRegister,
-    onLoginSuccess,
 }: {
     onClose: () => void;
     onSwitchToRegister: () => void;
-    onLoginSuccess: (username: string) => void;
 }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
-    const { setLoggedInUser } = useAuth();
+    const { handleLoginSuccess } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
         try {
-            const res = await fetch('/api/auth/login', {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password }),
@@ -36,8 +34,8 @@ export default function Login({
 
             switch (res.status) {
                 case 200:
-                    setLoggedInUser(data.user.username);
-                    onLoginSuccess(data.user.username);
+                    handleLoginSuccess(data.user.username);
+                    toast.success('Login successful!');
                     break;
                 case 404:
                     toast.error('User doesn’t exist or password not set');

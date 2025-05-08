@@ -46,7 +46,7 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
         const createNewGame = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/game/create/timetrial`, {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/game/createTimetrial`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ gridSize, username }),
@@ -57,7 +57,7 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
                     setCards(data.cards);
                     setGameId(data.gameId);
                 }
-                const scoreRes = await fetch('/api/scoreboard');
+                const scoreRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/scoreboard`);
                 const scoreData: ScoreEntry[] = await scoreRes.json();
 
                 const myScore = scoreData.find(entry => entry.username === username);
@@ -113,7 +113,7 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
             timerIdRef.current = timer;
         }
 
-        const res = await fetch('/api/card/reveal', {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/card/reveal`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ gameId, cardId }),
@@ -134,7 +134,7 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
             const [id1, id2] = flippedCards;
 
             setTimeout(async () => {
-                const res = await fetch('/api/card/match', {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/card/checkMatch`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ cardIds: [id1, id2] }),
@@ -162,6 +162,28 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
         }
     }, [flippedCards]);
 
+
+    const formatTime = (ms: number) => {
+        const totalSeconds = Math.floor(ms / 1000);
+        const milliseconds = Math.floor((ms % 1000) / 10);
+        const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+        const s = String(totalSeconds % 60).padStart(2, '0');
+        const msFormatted = String(milliseconds).padStart(2, '0');
+        return `${m}:${s}:${msFormatted}`;
+    };
+
+    const submitScore = useCallback(async (username: string, finaltime: number) => {
+        try {
+            await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/scoreboard/submit`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, gameId, time: finaltime }),
+            });
+        } catch (error) {
+            console.error('Error submitting score:', error);
+        }
+    }, [gameId]);
+
     useEffect(() => {
         if (matchedCards.size === cards.length && cards.length > 0 && startTime) {
             if (timerIdRef.current) {
@@ -176,32 +198,11 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
             if (bestTime === null || finalTime < bestTime) setGameResult('win');
             else setGameResult('lose');
         }
-    }, [matchedCards, cards, startTime, bestTime, username]);
-
-    const formatTime = (ms: number) => {
-        const totalSeconds = Math.floor(ms / 1000);
-        const milliseconds = Math.floor((ms % 1000) / 10);
-        const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
-        const s = String(totalSeconds % 60).padStart(2, '0');
-        const msFormatted = String(milliseconds).padStart(2, '0');
-        return `${m}:${s}:${msFormatted}`;
-    };
-
-    const submitScore = async (username: string, finaltime: number) => {
-        try {
-            await fetch('/api/score/submit', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, time: finaltime }),
-            });
-        } catch (error) {
-            console.error('Error submitting score:', error);
-        }
-    };
+    }, [matchedCards, cards, startTime, bestTime, username, submitScore]);
 
     const openScoreboard = async () => {
         try {
-            const res = await fetch('/api/scoreboard');
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/scoreboard`)
             const data = await res.json();
             setScoreboardData(data);
             setShowScoreboard(true);

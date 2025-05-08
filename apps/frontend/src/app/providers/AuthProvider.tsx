@@ -35,10 +35,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         const storedUser = localStorage.getItem('loggedInUser');
-        if (storedUser) {
+        if (storedUser && storedUser !== loggedInUser) {
             setLoggedInUserState(storedUser);
         }
-    }, []);
+    }, [loggedInUser]);
 
     const setLoggedInUser = (username: string) => {
         localStorage.setItem('loggedInUser', username);
@@ -104,7 +104,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 <Login
                     onClose={() => setShowLogin(false)}
                     onSwitchToRegister={openRegister}
-                    onLoginSuccess={handleLoginSuccess}
+                //onLoginSuccess={handleLoginSuccess}
                 />
             )}
 

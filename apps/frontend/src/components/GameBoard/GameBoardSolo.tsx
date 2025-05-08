@@ -37,7 +37,7 @@ export default function GameBoardSolo({
         const fetchSoloDeck = async () => {
             setLoading(true);
             try {
-                const res = await fetch('/api/game/create/solo', {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/game/createSolo`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ gridSize }),
@@ -81,13 +81,7 @@ export default function GameBoardSolo({
             )
                 return;
 
-            // await fetch('/api/card/flip', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ gameId, cardId }),
-            // });
-
-            const res = await fetch('/api/card/reveal', {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/card/reveal`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ gameId, cardId }),
@@ -109,7 +103,7 @@ export default function GameBoardSolo({
             const [id1, id2] = flippedCards;
 
             const evaluate = async () => {
-                const res = await fetch('/api/card/match', {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/card/checkMatch`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ cardIds: [id1, id2] }),
