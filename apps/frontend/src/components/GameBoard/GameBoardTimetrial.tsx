@@ -42,37 +42,37 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
     const [scoreboardData, setScoreboardData] = useState<ScoreEntry[]>([]);
     const [isTimerRunning, setIsTimerRunning] = useState(false);
 
-    useEffect(() => {
-        const createNewGame = async () => {
-            setLoading(true);
-            try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/game/createTimetrial`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ gridSize, username }),
-                });
+    const createNewGame = useCallback(async () => {
+        setLoading(true);
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/game/createTimetrial`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ gridSize, username }),
+            });
 
-                const data = await res.json();
-                if (res.ok && data.cards && data.gameId) {
-                    setCards(data.cards);
-                    setGameId(data.gameId);
-                }
-                const scoreRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/scoreboard`);
-                const scoreData: ScoreEntry[] = await scoreRes.json();
-
-                const myScore = scoreData.find(entry => entry.username === username);
-                if (myScore) {
-                    setBestTime(myScore.time);
-                }
-            } catch (error) {
-                console.error('[Initial Game Error]:', error);
-            } finally {
-                setLoading(false);
+            const data = await res.json();
+            if (res.ok && data.cards && data.gameId) {
+                setCards(data.cards);
+                setGameId(data.gameId);
             }
-        };
+            const scoreRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/scoreboard`);
+            const scoreData: ScoreEntry[] = await scoreRes.json();
 
-        if (username) createNewGame();
+            const myScore = scoreData.find(entry => entry.username === username);
+            if (myScore) {
+                setBestTime(myScore.time);
+            }
+        } catch (error) {
+            console.error('[Initial Game Error]:', error);
+        } finally {
+            setLoading(false);
+        }
     }, [gridSize, username]);
+
+    useEffect(() => {
+        if (username) createNewGame();
+    }, [createNewGame, username]);
 
     useEffect(() => {
         const updateLayout = () => {
@@ -229,8 +229,15 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
                             if (timerIdRef.current) {
                                 clearInterval(timerIdRef.current);
                                 timerIdRef.current = null;
-                                setIsTimerRunning(false);
                             }
+                            setIsTimerRunning(false);
+                            setStartTime(null);
+                            setElapsedTime(0);
+                            setMatchedCards(new Set());
+                            setFlippedCards([]);
+                            setCardImages({});
+                            setGameResult('');
+                            createNewGame();
                         }}
                         className="font-wedges text-xl text-white bg-gradient-to-b from-[#f87171] to-[#ef4444]
         px-[2.5rem] py-[1rem] rounded-full shadow transition-transform duration-150 active:scale-95 hover:brightness-110"
