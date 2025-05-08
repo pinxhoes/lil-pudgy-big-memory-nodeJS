@@ -1,11 +1,6 @@
 'use client';
 
-declare global {
-    interface Window {
-        openScoreboardFromDropdown?: () => void;
-    }
-}
-
+import Scoreboard from '@/components/Scoreboard';
 import { useRouter } from 'next/navigation';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import Login from '../../components/Login';
@@ -31,6 +26,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [showLogin, setShowLogin] = useState(false);
     const [showRegister, setShowRegister] = useState(false);
     const [showWelcome, setShowWelcome] = useState(false);
+    const [showScoreboard, setShowScoreboard] = useState(false);
+    const [scoreboardData, setScoreboardData] = useState([]);
     const router = useRouter();
 
     useEffect(() => {
@@ -66,16 +63,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setShowWelcome(true);
     };
 
+    const openScoreboard = async () => {
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/scoreboard`);
+            const data = await res.json();
+            setScoreboardData(data);
+            closeAllModals();
+            setShowScoreboard(true);
+        } catch (error) {
+            console.error('Failed to load scoreboard:', error);
+        }
+    };
+
     const closeAllModals = () => {
         setShowLogin(false);
         setShowRegister(false);
         setShowWelcome(false);
-    };
-
-    const openScoreboard = () => {
-        if (typeof window !== 'undefined' && window.openScoreboardFromDropdown) {
-            window.openScoreboardFromDropdown();
-        }
+        setShowScoreboard(false);
     };
 
     const logout = () => {
@@ -101,18 +105,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             {children}
 
             {showLogin && (
-                <Login
-                    onClose={() => setShowLogin(false)}
-                    onSwitchToRegister={openRegister}
-                //onLoginSuccess={handleLoginSuccess}
-                />
+                <Login onClose={() => setShowLogin(false)} onSwitchToRegister={openRegister} />
             )}
 
             {showRegister && (
-                <Register
-                    onClose={() => setShowRegister(false)}
-                    onSwitchToLogin={openLogin}
-                />
+                <Register onClose={() => setShowRegister(false)} onSwitchToLogin={openLogin} />
             )}
 
             {showWelcome && (
@@ -127,6 +124,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                         openScoreboard();
                         setShowWelcome(false);
                     }}
+                />
+            )}
+
+            {showScoreboard && (
+                <Scoreboard
+                    onClose={() => setShowScoreboard(false)}
+                    currentUsername={loggedInUser}
+                    scoreboardData={scoreboardData}
                 />
             )}
         </AuthContext.Provider>

@@ -1,10 +1,10 @@
 
 'use client';
 
+import { useAuth } from '@/app/providers/AuthProvider';
 import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Loading from '../Loading';
-import Scoreboard from '../Scoreboard';
 import './Card.css';
 
 type GameBoardTimetrialProps = {
@@ -38,9 +38,10 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
     const [gameResult, setGameResult] = useState<'' | 'win' | 'lose'>('');
     const [bestTime, setBestTime] = useState<number | null>(null);
     const timerIdRef = useRef<NodeJS.Timeout | null>(null);
-    const [showScoreboard, setShowScoreboard] = useState(false);
-    const [scoreboardData, setScoreboardData] = useState<ScoreEntry[]>([]);
+
     const [isTimerRunning, setIsTimerRunning] = useState(false);
+    const { openScoreboard } = useAuth();
+
 
     const createNewGame = useCallback(async () => {
         setLoading(true);
@@ -200,17 +201,6 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
         }
     }, [matchedCards, cards, startTime, bestTime, username, submitScore]);
 
-    const openScoreboard = async () => {
-        try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/scoreboard`)
-            const data = await res.json();
-            setScoreboardData(data);
-            setShowScoreboard(true);
-        } catch (error) {
-            console.error('Error opening scoreboard:', error);
-        }
-    };
-
     return (
         <div className="min-h-[100dvh] bg-[#80abff] flex flex-col items-center justify-start px-4 pt-8 gap-6">
             {loading && <Loading />}
@@ -292,14 +282,6 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
                     );
                 })}
             </div>
-
-            {showScoreboard && (
-                <Scoreboard
-                    onClose={() => setShowScoreboard(false)}
-                    currentUsername={username}
-                    scoreboardData={scoreboardData}
-                />
-            )}
         </div>
     );
 }

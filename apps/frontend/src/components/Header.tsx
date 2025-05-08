@@ -5,31 +5,12 @@ import Link from 'next/link';
 import { forwardRef, useEffect, useState } from 'react';
 import { useAuth } from '../app/providers/AuthProvider';
 import DropdownMenu from './DropdownMenu';
-import Loading from './Loading';
-import Scoreboard from './Scoreboard';
 
 const Header = forwardRef<HTMLElement>((_, ref) => {
-    const { loggedInUser, logout } = useAuth();
+    const { loggedInUser, logout, openScoreboard } = useAuth();
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [showScoreboard, setShowScoreboard] = useState(false);
-    const [scoreboardData, setScoreboardData] = useState([]);
-    const [isLoadingScoreboard, setIsLoadingScoreboard] = useState(false);
 
     const toggleDropdown = () => setDropdownOpen(prev => !prev);
-
-    const fetchScoreboard = async () => {
-        try {
-            setIsLoadingScoreboard(true);
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/scoreboard`)
-            const data = await res.json();
-            setScoreboardData(data);
-            setShowScoreboard(true);
-        } catch (error) {
-            console.error('Error fetching scoreboard:', error);
-        } finally {
-            setIsLoadingScoreboard(false);
-        }
-    };
 
     useEffect(() => {
         if (!loggedInUser) setDropdownOpen(false);
@@ -53,7 +34,6 @@ const Header = forwardRef<HTMLElement>((_, ref) => {
 
                     {dropdownOpen && (
                         <DropdownMenu>
-                            {/* Dropdown content */}
                             <div className="absolute top-[5rem] right-6 w-[250px] rounded-tl-[50px] rounded-bl-[50px] rounded-br-[50px] bg-white shadow-lg flex flex-col py-6 px-4 animate-slide-down z-50">
                                 <button
                                     onClick={() => {
@@ -66,7 +46,7 @@ const Header = forwardRef<HTMLElement>((_, ref) => {
                                 </button>
                                 <button
                                     onClick={() => {
-                                        fetchScoreboard();
+                                        openScoreboard();
                                         setDropdownOpen(false);
                                     }}
                                     className="block w-full text-left px-6 py-4 text-[#00142d] font-wedges text-lg hover:bg-gray-100 transition"
@@ -87,17 +67,6 @@ const Header = forwardRef<HTMLElement>((_, ref) => {
                     )}
                 </div>
             ) : null}
-
-            {/* Show Scoreboard modal */}
-
-            {isLoadingScoreboard && <Loading />}
-            {showScoreboard && (
-                <Scoreboard
-                    onClose={() => setShowScoreboard(false)}
-                    currentUsername={loggedInUser}
-                    scoreboardData={scoreboardData}
-                />
-            )}
         </header>
     );
 });
