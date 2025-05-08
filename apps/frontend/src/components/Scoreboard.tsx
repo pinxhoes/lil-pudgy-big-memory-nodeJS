@@ -100,7 +100,7 @@ export default function Scoreboard({
 
                         onClick={() => {
                             onClose();
-                            router.push('/play/solo/timetrial')
+                            router.push('/play/timetrial')
                         }}
                         className="mt-6 bg-gradient-to-b from-[#fcd34d] to-[#f59e0b] text-white font-wedges text-lg rounded-full 
               shadow-[0_6px_18px_rgba(0,0,0,0.25)] px-6 py-3 active:scale-95 hover:brightness-110 transition-transform"
