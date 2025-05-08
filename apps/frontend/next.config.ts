@@ -29,7 +29,7 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: `
               default-src 'self';
-              connect-src 'self' http://localhost:4000 http://91.99.30.6 https://auth.privy.io https://explorer-api.walletconnect.com wss://relay.walletconnect.org https://api.mainnet.abs.xyz;
+              connect-src 'self' https://api.stoopid.world https://auth.privy.io https://explorer-api.walletconnect.com wss://relay.walletconnect.org https://api.mainnet.abs.xyz;
               frame-src https://*.privy.io;
               script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ''};
               style-src 'self' 'unsafe-inline';
