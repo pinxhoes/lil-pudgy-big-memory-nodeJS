@@ -25,19 +25,26 @@ export async function createSoloGame(req: Request, res: Response) {
         const deck = await generateShuffledDeck(pairCount);
         console.log('[SOLO] Deck generated:', deck.map(d => d.id));
 
+        console.log('[SOLO] Preparing cards...');
+        const cardsToCreate = deck.map((template: { id: number }, index: number) => {
+            const card = {
+                position: index,
+                imageId: template.id,
+                flipped: false,
+                matched: false,
+                clientCardId: uuidv4(),
+            };
+            console.log(`[SOLO] Card ${index} →`, card);
+            return card;
+        });
+
         console.log('[SOLO] Creating game...');
         const game = await prisma.game.create({
             data: {
                 mode: 'solo',
                 boardSize,
                 cards: {
-                    create: deck.map((template: { id: number }, index: number) => ({
-                        position: index,
-                        imageId: template.id,
-                        flipped: false,
-                        matched: false,
-                        clientCardId: uuidv4(),
-                    })),
+                    create: cardsToCreate,
                 },
             },
         });
