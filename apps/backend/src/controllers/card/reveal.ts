@@ -11,26 +11,34 @@ export async function revealCard(req: Request, res: Response) {
             return res.status(400).json({ message: 'Missing gameId or cardId' });
         }
 
-        const card = await prisma.card.findUnique({
-            where: { id: cardId },
-            include: { game: true, image: true },
+        // Now we find by clientCardId instead of internal id
+        const card = await prisma.card.findFirst({
+            where: {
+                gameId,
+                clientCardId: cardId,
+            },
+            include: {
+                game: true,
+                image: true,
+            },
         });
 
-        if (!card || card.gameId !== gameId) {
+        if (!card) {
             return res.status(403).json({ message: 'Invalid card or game' });
         }
 
         if (!card.flipped) {
             await prisma.card.update({
-                where: { id: cardId },
+                where: { id: card.id },
                 data: { flipped: true },
             });
         }
 
-        const imagePath = path.join(__dirname, '../../../public', card.image.imageUrl);
         if (!card.image?.imageUrl) {
             return res.status(404).json({ message: 'Image not found for card' });
         }
+
+        const imagePath = path.join(__dirname, '../../../public', card.image.imageUrl);
         const imageBuffer = await fs.readFile(imagePath);
 
         res.setHeader('Content-Type', 'image/svg+xml');

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useAuth } from '@/app/providers/AuthProvider';
@@ -24,7 +23,6 @@ type ScoreEntry = {
 
 export default function GameBoardTimetrial({ username, gridSize }: GameBoardTimetrialProps) {
     const [cards, setCards] = useState<CardInfo[]>([]);
-    const [gameId, setGameId] = useState('');
     const [flippedCards, setFlippedCards] = useState<string[]>([]);
     const [matchedCards, setMatchedCards] = useState<Set<string>>(new Set());
     const [cardImages, setCardImages] = useState<Record<string, string>>({});
@@ -42,38 +40,21 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
     const [isTimerRunning, setIsTimerRunning] = useState(false);
     const { openScoreboard } = useAuth();
 
-
-    const createNewGame = useCallback(async () => {
-        setLoading(true);
-        try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/game/createTimetrial`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ gridSize, username }),
-            });
-
-            const data = await res.json();
-            if (res.ok && data.cards && data.gameId) {
-                setCards(data.cards);
-                setGameId(data.gameId);
-            }
-            const scoreRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/scoreboard`);
-            const scoreData: ScoreEntry[] = await scoreRes.json();
-
-            const myScore = scoreData.find(entry => entry.username === username);
-            if (myScore) {
-                setBestTime(myScore.time);
-            }
-        } catch (error) {
-            console.error('[Initial Game Error]:', error);
-        } finally {
-            setLoading(false);
-        }
-    }, [gridSize, username]);
-
+    // 🧠 Fetch best time
     useEffect(() => {
-        if (username) createNewGame();
-    }, [createNewGame, username]);
+        const fetchScoreboard = async () => {
+            try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/scoreboard`);
+                const scoreData: ScoreEntry[] = await res.json();
+                const myScore = scoreData.find(entry => entry.username === username);
+                if (myScore) setBestTime(myScore.time);
+            } catch (err) {
+                console.error('[Best Score Fetch Error]:', err);
+            }
+        };
+
+        if (username) fetchScoreboard();
+    }, [username]);
 
     useEffect(() => {
         const updateLayout = () => {
@@ -88,9 +69,7 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
 
             const cardWidth = maxWidth / dynamicColumns;
             const cardHeight = maxHeight / totalRows;
-
-            const size = Math.min(cardWidth, cardHeight, 200);
-            setCardSize(size);
+            setCardSize(Math.min(cardWidth, cardHeight, 200));
         };
 
         updateLayout();
@@ -98,42 +77,71 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
         return () => window.removeEventListener('resize', updateLayout);
     }, [cards.length]);
 
-    const handleFlip = useCallback(async (cardId: string) => {
-        if (disabled || flippedCards.includes(cardId) || matchedCards.has(cardId)) return;
+    // 🃏 Start game and generate shuffled deck
+    const startGame = useCallback(async () => {
+        setLoading(true);
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/game/createTimetrial`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ gridSize }),
+            });
 
-        const isFirstClick = flippedCards.length === 0 && matchedCards.size === 0;
-        if (isFirstClick && startTime === null) {
-            const now = Date.now();
-            setStartTime(now);
-            setElapsedTime(0);
-            setIsTimerRunning(true);
-
-            const timer = setInterval(() => {
-                setElapsedTime(Date.now() - now);
-            }, 100);
-            timerIdRef.current = timer;
+            const data = await res.json();
+            if (res.ok && data.cards) {
+                setCards(data.cards);
+            }
+        } catch (err) {
+            console.error('[Start Game Error]', err);
+        } finally {
+            setLoading(false);
         }
+    }, [gridSize]);
 
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/card/reveal`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ gameId, cardId }),
-        });
+    // 🎴 Flip card
+    const handleFlip = useCallback(
+        async (cardId: string) => {
+            if (disabled || flippedCards.includes(cardId) || matchedCards.has(cardId)) return;
 
-        if (res.ok) {
-            const blob = await res.blob();
-            const url = URL.createObjectURL(blob);
-            setCardImages(prev => ({ ...prev, [cardId]: url }));
-            setFlippedCards(prev => [...prev, cardId]);
-        }
+            const isFirstClick = flippedCards.length === 0 && matchedCards.size === 0;
 
-        if (flippedCards.length === 1) setDisabled(true);
-    }, [disabled, flippedCards, matchedCards, startTime, gameId]);
+            if (isFirstClick && cards.length === 0) {
+                await startGame();
+                return;
+            }
 
+            if (isFirstClick && startTime === null) {
+                const now = Date.now();
+                setStartTime(now);
+                setElapsedTime(0);
+                setIsTimerRunning(true);
+                timerIdRef.current = setInterval(() => {
+                    setElapsedTime(Date.now() - now);
+                }, 100);
+            }
+
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/card/reveal`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ cardId }),
+            });
+
+            if (res.ok) {
+                const blob = await res.blob();
+                const url = URL.createObjectURL(blob);
+                setCardImages(prev => ({ ...prev, [cardId]: url }));
+                setFlippedCards(prev => [...prev, cardId]);
+            }
+
+            if (flippedCards.length === 1) setDisabled(true);
+        },
+        [disabled, flippedCards, matchedCards, startTime, cards.length, startGame]
+    );
+
+    // ✅ Check for match
     useEffect(() => {
         if (flippedCards.length === 2) {
             const [id1, id2] = flippedCards;
-
             setTimeout(async () => {
                 const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/card/checkMatch`, {
                     method: 'POST',
@@ -142,9 +150,7 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
                 });
 
                 const result = await res.json();
-                const isMatch = res.status === 200 && result.matched === true;
-
-                if (isMatch) {
+                if (res.ok && result.matched) {
                     setMatchedCards(prev => new Set(prev).add(id1).add(id2));
                 } else {
                     setTimeout(() => {
@@ -163,7 +169,7 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
         }
     }, [flippedCards]);
 
-
+    // 🕒 Timer formatter
     const formatTime = (ms: number) => {
         const totalSeconds = Math.floor(ms / 1000);
         const milliseconds = Math.floor((ms % 1000) / 10);
@@ -173,45 +179,39 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
         return `${m}:${s}:${msFormatted}`;
     };
 
+    // 🏁 Submit score after game ends
     const submitScore = useCallback(async (username: string, finaltime: number) => {
         try {
             await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/scoreboard/submit`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, gameId, time: finaltime }),
+                body: JSON.stringify({ username, time: finaltime }),
             });
         } catch (error) {
             console.error('Error submitting score:', error);
         }
-    }, [gameId]);
+    }, []);
 
+    // 🧠 Game complete
     useEffect(() => {
-        // ✅ Prevent accidental calls when cards aren't loaded yet
-        if (!startTime || cards.length === 0) return;
+        if (!startTime || cards.length === 0 || matchedCards.size !== cards.length) return;
 
-        // ✅ Only continue if all cards have been matched
-        if (matchedCards.size !== cards.length) return;
-
-        console.log('[DEBUG] Game finished. Matched:', matchedCards.size, 'Cards:', cards.length);
-
-        // 🕒 Stop the timer
         if (timerIdRef.current) {
             clearInterval(timerIdRef.current);
             timerIdRef.current = null;
-            setIsTimerRunning(false);
         }
 
+        setIsTimerRunning(false);
         const finalTime = Date.now() - startTime;
 
         if (username) submitScore(username, finalTime);
-
         if (bestTime === null || finalTime < bestTime) {
             setBestTime(finalTime);
             setGameResult('win');
         } else {
             setGameResult('lose');
         }
-    }, [matchedCards, cards, startTime, bestTime, username, submitScore]);
+    }, [matchedCards, cards.length, startTime, username, bestTime, submitScore]);
 
     return (
         <div className="min-h-[100dvh] bg-[#80abff] flex flex-col items-center justify-start px-4 pt-8 gap-6">
@@ -228,10 +228,7 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
                 {isTimerRunning ? (
                     <button
                         onClick={() => {
-                            if (timerIdRef.current) {
-                                clearInterval(timerIdRef.current);
-                                timerIdRef.current = null;
-                            }
+                            if (timerIdRef.current) clearInterval(timerIdRef.current);
                             setIsTimerRunning(false);
                             setStartTime(null);
                             setElapsedTime(0);
@@ -239,10 +236,10 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
                             setFlippedCards([]);
                             setCardImages({});
                             setGameResult('');
-                            createNewGame();
+                            setCards([]);
                         }}
                         className="font-wedges text-xl text-white bg-gradient-to-b from-[#f87171] to-[#ef4444]
-        px-[2.5rem] py-[1rem] rounded-full shadow transition-transform duration-150 active:scale-95 hover:brightness-110"
+              px-[2.5rem] py-[1rem] rounded-full shadow transition-transform duration-150 active:scale-95 hover:brightness-110"
                     >
                         Stop Game
                     </button>
@@ -250,14 +247,13 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
                     <button
                         onClick={openScoreboard}
                         className="font-wedges text-xl text-white bg-gradient-to-b from-[#597ab0] to-[#00142D]
-        px-[2.5rem] py-[1rem] rounded-full shadow transition-transform duration-150 active:scale-95 hover:brightness-110"
+              px-[2.5rem] py-[1rem] rounded-full shadow transition-transform duration-150 active:scale-95 hover:brightness-110"
                     >
                         Leaderboard
                     </button>
                 )}
             </div>
 
-            {/* Timers */}
             <div className="flex flex-col items-center text-white font-wedges text-2xl gap-1">
                 <div>Best time: {bestTime && bestTime > 0 ? formatTime(bestTime) : '--:--:--'}</div>
                 <div>Your time: {formatTime(elapsedTime)}</div>

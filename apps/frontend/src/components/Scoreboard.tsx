@@ -66,7 +66,7 @@ export default function Scoreboard({
                                 >
                                     <div className="flex items-center gap-3">
                                         <span className={`font-wedges text-xl ${isTop || isCurrentUser ? 'text-white' : 'text-[#4C6377]'}`}>
-                                            {isCurrentUser ? 'YOU' : index + 1}
+                                            {index + 1}{isCurrentUser ? ' • YOU' : ''}
                                         </span>
                                         <Image
                                             src="/img/userLogo.svg"

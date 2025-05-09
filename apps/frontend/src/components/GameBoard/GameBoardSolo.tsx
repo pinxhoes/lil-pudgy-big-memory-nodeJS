@@ -20,7 +20,6 @@ export default function GameBoardSolo({
     gridSize: number;
 }) {
     const [cards, setCards] = useState<CardInfo[]>([]);
-    const [gameId, setGameId] = useState('');
     const [flippedCards, setFlippedCards] = useState<string[]>([]);
     const [matchedCards, setMatchedCards] = useState<Set<string>>(new Set());
     const [cardImages, setCardImages] = useState<Record<string, string>>({});
@@ -43,9 +42,8 @@ export default function GameBoardSolo({
                     body: JSON.stringify({ gridSize }),
                 });
                 const data = await res.json();
-                if (res.ok && data.cards && data.gameId) {
-                    setCards(data.cards);
-                    setGameId(data.gameId);
+                if (res.ok && data.cards) {
+                    setCards(data.cards); // IDs are UUIDs now
                 } else {
                     console.error('[SOLO Deck Error]', data);
                 }
@@ -84,7 +82,7 @@ export default function GameBoardSolo({
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/card/reveal`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ gameId, cardId }),
+                body: JSON.stringify({ cardId }),
             });
 
             if (res.ok) {
@@ -94,7 +92,7 @@ export default function GameBoardSolo({
                 setFlippedCards((prev) => [...prev, cardId]);
             }
         },
-        [disabled, flippedCards, matchedCards, gameId]
+        [disabled, flippedCards, matchedCards]
     );
 
     useEffect(() => {
@@ -118,7 +116,6 @@ export default function GameBoardSolo({
                         setPlayerScore((p) => p + 1);
                     } else {
                         setComputerScore((p) => p + 1);
-                        // ⏱ slight delay before computer plays again
                         setTimeout(() => {
                             setTurnTrigger((t) => t + 1);
                         }, 300);
@@ -127,7 +124,6 @@ export default function GameBoardSolo({
                     setFlippedCards([]);
                     setDisabled(false);
                 } else {
-                    // delay to show unmatched cards
                     setTimeout(() => {
                         setCardImages((prev) => {
                             const rest = { ...prev };
@@ -168,7 +164,7 @@ export default function GameBoardSolo({
             handleFlip(c1.id);
             setTimeout(() => {
                 handleFlip(c2.id);
-            }, 600); // delay between card 1 and 2
+            }, 600);
         }, 400);
     }, [turnTrigger, currentPlayer, flippedCards, disabled, matchedCards, cards, handleFlip]);
 

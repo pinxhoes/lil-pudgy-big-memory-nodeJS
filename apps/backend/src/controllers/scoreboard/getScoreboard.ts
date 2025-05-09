@@ -4,11 +4,12 @@ import { prisma } from '../../lib/db';
 export async function getScoreboard(_req: Request, res: Response) {
     try {
         const games = await prisma.game.findMany({
-            where: { mode: 'timetrial' },
+            where: {
+                mode: 'timetrial',
+                durationMs: { not: null, gt: 0 },
+            },
             select: {
-                user: {
-                    select: { username: true },
-                },
+                user: { select: { username: true } },
                 durationMs: true,
             },
             orderBy: {
@@ -23,7 +24,7 @@ export async function getScoreboard(_req: Request, res: Response) {
             const time = game.durationMs;
 
             if (username && time !== null && !bestTimePerUser.has(username)) {
-                bestTimePerUser.set(username, { username, time: Number(time) });
+                bestTimePerUser.set(username, { username, time });
             }
         }
 

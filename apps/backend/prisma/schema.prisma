@@ -31,14 +31,15 @@ model Game {
 }
 
 model Card {
-  id       String       @id @default(uuid())
-  gameId   String
-  position Int
-  imageId  Int
-  flipped  Boolean      @default(false)
-  matched  Boolean      @default(false)
-  game     Game         @relation(fields: [gameId], references: [id])
-  image    CardTemplate @relation(fields: [imageId], references: [id])
+  id            String       @id @default(uuid())
+  gameId        String
+  position      Int
+  imageId       Int
+  flipped       Boolean      @default(false)
+  matched       Boolean      @default(false)
+  game          Game         @relation(fields: [gameId], references: [id])
+  clientCardId  String       @unique
+  image         CardTemplate @relation(fields: [imageId], references: [id])
 }
 
 model CardTemplate {

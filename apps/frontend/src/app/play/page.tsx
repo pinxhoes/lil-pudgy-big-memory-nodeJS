@@ -1,22 +1,13 @@
 'use client';
 
-import { useAuth } from '../providers/AuthProvider';
-// import Login from '@/components/Login';
-// import Register from '@/components/Register';
-// import Welcome from '@/components/Welcome';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useAuth } from '../providers/AuthProvider';
 
 export default function Play() {
     const router = useRouter();
     const { loggedInUser, openLogin } = useAuth();
-
     const [mode, setMode] = useState<'multiplayer' | null>(null);
-    // const [showLogin, setShowLogin] = useState(false);
-    // const [showRegister, setShowRegister] = useState(false);
-    // const [showWelcome, setShowWelcome] = useState(false);
-    // const [username, setUsername] = useState('');
-
     const handleTimetrialClick = () => {
         if (!loggedInUser) {
             openLogin();
@@ -71,43 +62,6 @@ export default function Play() {
                     </div>
                 )}
             </div>
-
-            {/* {showLogin && (
-                <Login
-                    onClose={() => setShowLogin(false)}
-                    onSwitchToRegister={() => {
-                        setShowLogin(false);
-                        setShowRegister(true);
-                    }}
-                    onLoginSuccess={(uname) => {
-                        setUsername(uname);
-                        setShowLogin(false);
-                        setShowWelcome(true);
-                    }}
-                />
-            )}
-
-            {showRegister && (
-                <Register
-                    onClose={() => setShowRegister(false)}
-                    onSwitchToLogin={() => {
-                        setShowRegister(false);
-                        setShowLogin(true);
-                    }}
-                />
-            )}
-
-            {showWelcome && (
-                <Welcome
-                    username={username}
-                    onClose={() => setShowWelcome(false)}
-                    onPlayNow={() => router.push('/play/timetrial')}
-                    onViewRecord={() => {
-                        setShowWelcome(false);
-
-                    }}
-                />
-            )} */}
         </main>
     );
 }
