@@ -1,7 +1,9 @@
 import { prisma } from './db';
 
 export async function generateShuffledDeck(pairCount: number) {
-    const allTemplates = await prisma.cardTemplate.findMany();
+    const allTemplates = await prisma.cardTemplate.findMany({
+        select: { id: true },
+    });
 
     if (allTemplates.length < pairCount) {
         throw new Error(

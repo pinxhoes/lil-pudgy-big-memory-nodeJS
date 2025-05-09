@@ -24,8 +24,8 @@ export async function createSoloGame(req: Request, res: Response) {
         console.log('[SOLO] Generating deck...');
         const deck = await generateShuffledDeck(pairCount);
         console.log('[SOLO] Deck generated:', deck.map(d => d.id));
-
         console.log('[SOLO] Preparing cards...');
+        console.log('[SOLO] Deck raw output:', deck);
         const cardsToCreate = deck.map((template: { id: number }, index: number) => {
             const card = {
                 position: index,
