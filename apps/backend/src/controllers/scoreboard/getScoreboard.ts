@@ -23,7 +23,7 @@ export async function getScoreboard(_req: Request, res: Response) {
             const time = game.durationMs;
 
             if (username && time !== null && !bestTimePerUser.has(username)) {
-                bestTimePerUser.set(username, { username, time });
+                bestTimePerUser.set(username, { username, time: Number(time) });
             }
         }
 

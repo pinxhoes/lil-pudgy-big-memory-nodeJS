@@ -88,7 +88,7 @@ export default function Scoreboard({
                                         </span>
                                     </div>
                                     <span className={`${isTop || isCurrentUser ? 'text-white' : 'text-[#4C6377]'} font-bold`}>
-                                        {formatTime(entry.time)}
+                                        {formatTime(Number(entry.time))}
                                     </span>
                                 </div>
                             );

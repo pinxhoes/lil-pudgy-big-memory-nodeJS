@@ -17,7 +17,7 @@ export const submitScore = async (req: Request, res: Response) => {
 
         await prisma.game.update({
             where: { id: gameId },
-            data: { durationMs: time },
+            data: { durationMs: Number(time) },
         });
 
         return res.status(201).json({ message: 'Score submitted' });

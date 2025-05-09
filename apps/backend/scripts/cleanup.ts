@@ -1,4 +1,5 @@
-import { prisma } from "../../frontend/src/app/lib/db";
+import 'dotenv/config';
+import { prisma } from '../src/lib/db';
 
 async function main() {
     let totalDeleted = 0;
