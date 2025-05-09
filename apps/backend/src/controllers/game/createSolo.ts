@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { prisma } from '../../lib/db';
@@ -26,7 +27,8 @@ export async function createSoloGame(req: Request, res: Response) {
         console.log('[SOLO] Deck generated:', deck.map(d => d.id));
         console.log('[SOLO] Preparing cards...');
         console.log('[SOLO] Deck raw output:', deck);
-        const cardsToCreate = deck.map((template: { id: number }, index: number) => {
+
+        const cardsToCreate: Prisma.CardUncheckedCreateWithoutGameInput[] = deck.map((template: { id: number }, index: number) => {
             const card = {
                 position: index,
                 imageId: template.id,
