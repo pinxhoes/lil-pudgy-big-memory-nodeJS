@@ -20,9 +20,12 @@ export async function createSoloGame(req: Request, res: Response) {
 
         const boardSize = boardSizeMap[gridSize];
         const pairCount = gridSize / 2;
-        const deck = await generateShuffledDeck(pairCount);
 
-        // Create game + cards in DB with clientCardId
+        console.log('[SOLO] Generating deck...');
+        const deck = await generateShuffledDeck(pairCount);
+        console.log('[SOLO] Deck generated:', deck.map(d => d.id));
+
+        console.log('[SOLO] Creating game...');
         const game = await prisma.game.create({
             data: {
                 mode: 'solo',
@@ -37,22 +40,19 @@ export async function createSoloGame(req: Request, res: Response) {
                     })),
                 },
             },
-            include: {
-                cards: {
-                    orderBy: { position: 'asc' },
-                    select: { clientCardId: true, position: true },
-                },
-            },
         });
 
-        const cards = game.cards.map((card) => ({
-            id: card.clientCardId,
-            position: card.position,
-        }));
+        console.log('[SOLO] Game created:', game.id);
 
-        return res.status(200).json({ cards });
+        const realCards = await prisma.card.findMany({
+            where: { gameId: game.id },
+            orderBy: { position: 'asc' },
+            select: { clientCardId: true, position: true },
+        });
+
+        return res.status(200).json({ gameId: game.id, cards: realCards });
     } catch (err) {
         console.error('[Create Solo Game Error]', err);
-        res.status(500).json({ message: 'Server error' });
+        return res.status(500).json({ message: 'Server error' });
     }
 }
