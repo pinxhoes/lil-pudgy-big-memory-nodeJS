@@ -40,6 +40,39 @@ async function main() {
     totalDeleted += unfinishedTimetrials.count;
 
     console.log(`✨ Total cleaned up: ${totalDeleted} games.`);
+
+    // 4. 🏆 Keep only best timetrial game (lowest durationMs) per user
+    const allUsers = await prisma.user.findMany();
+
+    let deduplicatedCount = 0;
+
+    for (const user of allUsers) {
+        const games = await prisma.game.findMany({
+            where: {
+                mode: 'timetrial',
+                userId: user.id,
+                durationMs: { gt: 0 }, // finished games only
+            },
+            orderBy: {
+                durationMs: 'asc',
+            },
+        });
+
+        if (games.length > 1) {
+            const [bestGame, ...rest] = games;
+
+            const deleted = await prisma.game.deleteMany({
+                where: {
+                    id: { in: rest.map(g => g.id) },
+                },
+            });
+
+            deduplicatedCount += deleted.count;
+        }
+    }
+
+    console.log(`✅ Deleted ${deduplicatedCount} duplicate timetrial scores.`);
+    totalDeleted += deduplicatedCount;
 }
 
 main().catch((e) => {

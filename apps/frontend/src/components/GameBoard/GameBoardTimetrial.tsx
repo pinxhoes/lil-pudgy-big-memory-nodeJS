@@ -196,8 +196,12 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
             const finalTime = Date.now() - startTime;
             if (username) submitScore(username, finalTime);
 
-            if (bestTime === null || finalTime < bestTime) setGameResult('win');
-            else setGameResult('lose');
+            if (bestTime === null || finalTime < bestTime) {
+                setBestTime(finalTime);
+                setGameResult('win');
+            } else {
+                setGameResult('lose');
+            }
         }
     }, [matchedCards, cards, startTime, bestTime, username, submitScore]);
 
@@ -247,7 +251,7 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
 
             {/* Timers */}
             <div className="flex flex-col items-center text-white font-wedges text-2xl gap-1">
-                <div>Best time: {bestTime !== null ? formatTime(bestTime) : '--:--:--'}</div>
+                <div>Best time: {bestTime && bestTime > 0 ? formatTime(bestTime) : '--:--:--'}</div>
                 <div>Your time: {formatTime(elapsedTime)}</div>
             </div>
 
