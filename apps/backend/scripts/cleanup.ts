@@ -30,13 +30,14 @@ async function main() {
     totalDeleted += oldTTResult.count;
 
     // 3. 🚫 Delete any game with durationMs = 0 (incomplete)
-    const incompleteResult = await prisma.game.deleteMany({
+    const unfinishedTimetrials = await prisma.game.deleteMany({
         where: {
+            mode: 'timetrial',
             durationMs: 0,
         },
     });
-    console.log(`✅ Deleted ${incompleteResult.count} incomplete games (duration = 0).`);
-    totalDeleted += incompleteResult.count;
+    console.log(`🧹 Deleted ${unfinishedTimetrials.count} unfinished timetrial games.`);
+    totalDeleted += unfinishedTimetrials.count;
 
     console.log(`✨ Total cleaned up: ${totalDeleted} games.`);
 }
