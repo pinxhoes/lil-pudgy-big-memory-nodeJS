@@ -59,7 +59,7 @@ async function main() {
         });
 
         if (games.length > 1) {
-            const [bestGame, ...rest] = games;
+            const [, ...rest] = games;
 
             const deleted = await prisma.game.deleteMany({
                 where: {

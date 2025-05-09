@@ -186,22 +186,30 @@ export default function GameBoardTimetrial({ username, gridSize }: GameBoardTime
     }, [gameId]);
 
     useEffect(() => {
-        if (matchedCards.size === cards.length && cards.length > 0 && startTime) {
-            if (timerIdRef.current) {
-                clearInterval(timerIdRef.current);
-                timerIdRef.current = null;
-                setIsTimerRunning(false);
-            }
+        // ✅ Prevent accidental calls when cards aren't loaded yet
+        if (!startTime || cards.length === 0) return;
 
-            const finalTime = Date.now() - startTime;
-            if (username) submitScore(username, finalTime);
+        // ✅ Only continue if all cards have been matched
+        if (matchedCards.size !== cards.length) return;
 
-            if (bestTime === null || finalTime < bestTime) {
-                setBestTime(finalTime);
-                setGameResult('win');
-            } else {
-                setGameResult('lose');
-            }
+        console.log('[DEBUG] Game finished. Matched:', matchedCards.size, 'Cards:', cards.length);
+
+        // 🕒 Stop the timer
+        if (timerIdRef.current) {
+            clearInterval(timerIdRef.current);
+            timerIdRef.current = null;
+            setIsTimerRunning(false);
+        }
+
+        const finalTime = Date.now() - startTime;
+
+        if (username) submitScore(username, finalTime);
+
+        if (bestTime === null || finalTime < bestTime) {
+            setBestTime(finalTime);
+            setGameResult('win');
+        } else {
+            setGameResult('lose');
         }
     }, [matchedCards, cards, startTime, bestTime, username, submitScore]);
 
