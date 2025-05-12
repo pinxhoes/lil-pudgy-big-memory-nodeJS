@@ -1,9 +1,6 @@
-import { Prisma } from '@prisma/client';
 import { Request, Response } from 'express';
-import { v4 as uuidv4 } from 'uuid';
 import { prisma } from '../../lib/db';
 import { generateShuffledDeck } from '../../lib/utils';
-
 
 export async function createTimetrialGame(req: Request, res: Response) {
     try {
@@ -13,22 +10,16 @@ export async function createTimetrialGame(req: Request, res: Response) {
         const boardSize = '6x8';
         const deck = await generateShuffledDeck(pairCount);
 
-        const cardsToCreate: Prisma.CardUncheckedCreateWithoutGameInput[] = deck.map((template: { id: number }, index: number) => {
-            const card = {
-                position: index,
-                imageId: template.id,
-                flipped: false,
-                matched: false,
-                clientCardId: uuidv4(),
-            };
-            console.log(`[SOLO] Card ${index} →`, card);
-            return card;
-        });
+        const cardsToCreate = deck.map((template, index) => ({
+            position: index,
+            imageId: template.id,
+            flipped: false,
+            matched: false,
+        }));
 
-        console.log('[SOLO] Creating game...');
         const game = await prisma.game.create({
             data: {
-                mode: 'solo',
+                mode: 'timetrial',
                 boardSize,
                 cards: {
                     create: cardsToCreate,
@@ -40,13 +31,13 @@ export async function createTimetrialGame(req: Request, res: Response) {
             where: { gameId: game.id },
             orderBy: { position: 'asc' },
             select: {
-                clientCardId: true,
+                id: true, // Now using internal ID instead
                 position: true,
             },
         });
 
         const responseCards = cards.map(card => ({
-            id: card.clientCardId,
+            id: card.id,
             position: card.position,
         }));
 

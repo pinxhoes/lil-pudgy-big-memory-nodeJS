@@ -1,6 +1,4 @@
-import { Prisma } from '@prisma/client';
 import { Request, Response } from 'express';
-import { v4 as uuidv4 } from 'uuid';
 import { prisma } from '../../lib/db';
 import { generateShuffledDeck } from '../../lib/utils';
 
@@ -21,26 +19,15 @@ export async function createSoloGame(req: Request, res: Response) {
 
         const boardSize = boardSizeMap[gridSize];
         const pairCount = gridSize / 2;
-
-        console.log('[SOLO] Generating deck...');
         const deck = await generateShuffledDeck(pairCount);
-        console.log('[SOLO] Deck generated:', deck.map(d => d.id));
-        console.log('[SOLO] Preparing cards...');
-        console.log('[SOLO] Deck raw output:', deck);
 
-        const cardsToCreate: Prisma.CardUncheckedCreateWithoutGameInput[] = deck.map((template: { id: number }, index: number) => {
-            const card = {
-                position: index,
-                imageId: template.id,
-                flipped: false,
-                matched: false,
-                clientCardId: uuidv4(),
-            };
-            console.log(`[SOLO] Card ${index} →`, card);
-            return card;
-        });
+        const cardsToCreate = deck.map((template, index) => ({
+            position: index,
+            imageId: template.id,
+            flipped: false,
+            matched: false,
+        }));
 
-        console.log('[SOLO] Creating game...');
         const game = await prisma.game.create({
             data: {
                 mode: 'solo',
@@ -51,12 +38,10 @@ export async function createSoloGame(req: Request, res: Response) {
             },
         });
 
-        console.log('[SOLO] Game created:', game.id);
-
         const realCards = await prisma.card.findMany({
             where: { gameId: game.id },
             orderBy: { position: 'asc' },
-            select: { clientCardId: true, position: true },
+            select: { id: true, position: true },
         });
 
         return res.status(200).json({ gameId: game.id, cards: realCards });

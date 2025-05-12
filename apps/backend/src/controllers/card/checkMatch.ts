@@ -13,8 +13,8 @@ export async function checkCardMatch(req: Request, res: Response) {
         const cards = await prisma.card.findMany({
             where: {
                 gameId,
-                clientCardId: { in: cardIds },
-            },
+                id: { in: cardIds },
+            }
         });
 
         // Ensure both cards are found
@@ -29,7 +29,7 @@ export async function checkCardMatch(req: Request, res: Response) {
             await prisma.card.updateMany({
                 where: {
                     gameId,
-                    clientCardId: { in: [card1.clientCardId, card2.clientCardId] },
+                    id: { in: [card1.id, card2.id] },
                 },
                 data: { matched: true },
             });

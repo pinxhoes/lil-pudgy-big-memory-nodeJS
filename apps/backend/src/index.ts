@@ -11,15 +11,22 @@ import scoreboardRoutes from './routes/scoreboard';
 import userRoutes from './routes/user';
 
 const app = express();
-app.use(cors());
+const allowedOrigins =
+    process.env.NODE_ENV === 'production'
+        ? ['https://stoopid.world', 'https://api.stoopid.world']
+        : ['http://localhost:3000', 'https://stoopid.world', 'https://api.stoopid.world'];
+
+app.use(cors({
+    origin: allowedOrigins,
+    credentials: true,
+}));
+
 app.use(express.json());
 app.use('/cards', express.static(path.join(__dirname, '../../public/cards')));
 
 app.get('/api/health', (_req, res) => {
     res.send('✅ Backend is running!');
 });
-
-
 
 const PORT = Number(process.env.PORT) || 4000;
 app.listen(PORT, '0.0.0.0', () => {

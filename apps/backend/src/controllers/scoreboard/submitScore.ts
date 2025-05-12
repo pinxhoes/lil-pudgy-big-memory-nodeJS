@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { v4 as uuidv4 } from 'uuid';
 import { prisma } from '../../lib/db';
 import { generateShuffledDeck } from '../../lib/utils';
 
@@ -22,7 +21,7 @@ export const submitScore = async (req: Request, res: Response) => {
             },
         });
 
-        // ✅ Generate and save new game only if it's a valid score
+        // ✅ Generate and save new game
         const boardSize = '6x8';
         const pairCount = gridSize / 2;
         const deck = await generateShuffledDeck(pairCount);
@@ -39,7 +38,6 @@ export const submitScore = async (req: Request, res: Response) => {
                         imageId: template.id,
                         flipped: true,
                         matched: true,
-                        clientCardId: uuidv4(),
                     })),
                 },
             },
