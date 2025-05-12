@@ -187,7 +187,7 @@ export default function GameBoardSolo({
                 }).catch(err => {
                     console.error('[Cleanup Error]', err);
                 });
-            }, 500); // delay for dramatic flair
+            }, 500);
         }
     }, [matchedCards, cards]);
 
