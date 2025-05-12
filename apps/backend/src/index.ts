@@ -11,10 +11,11 @@ import scoreboardRoutes from './routes/scoreboard';
 import userRoutes from './routes/user';
 
 const app = express();
-const allowedOrigins =
-    process.env.NODE_ENV === 'production'
-        ? ['https://stoopid.world', 'https://api.stoopid.world']
-        : ['http://localhost:3000', 'https://stoopid.world', 'https://api.stoopid.world'];
+const allowedOrigins = [
+    'http://localhost:3000',
+    'https://stoopid.world',
+    'https://api.stoopid.world'
+];
 
 app.use(cors({
     origin: allowedOrigins,

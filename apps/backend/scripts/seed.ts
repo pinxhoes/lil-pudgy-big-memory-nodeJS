@@ -5,7 +5,7 @@ import path from 'path';
 const prisma = new PrismaClient();
 
 async function main() {
-    const cardsDir = path.join(__dirname, '../../public/cards');
+    const cardsDir = path.join(__dirname, '../public/cards'); // 🔧 fixed
     const files = await fs.readdir(cardsDir);
     const svgFiles = files.filter((f) => f.endsWith('.svg'));
 

@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { Request, Response } from 'express';
 import { prisma } from '../../lib/db';
 import { generateShuffledDeck } from '../../lib/utils';
@@ -21,7 +22,7 @@ export async function createSoloGame(req: Request, res: Response) {
         const pairCount = gridSize / 2;
         const deck = await generateShuffledDeck(pairCount);
 
-        const cardsToCreate = deck.map((template, index) => ({
+        const cardsToCreate: Prisma.CardUncheckedCreateWithoutGameInput[] = deck.map((template, index) => ({
             position: index,
             imageId: template.id,
             flipped: false,
@@ -33,7 +34,7 @@ export async function createSoloGame(req: Request, res: Response) {
                 mode: 'solo',
                 boardSize,
                 cards: {
-                    create: cardsToCreate,
+                    create: cardsToCreate as Prisma.CardUncheckedCreateWithoutGameInput[],
                 },
             },
         });

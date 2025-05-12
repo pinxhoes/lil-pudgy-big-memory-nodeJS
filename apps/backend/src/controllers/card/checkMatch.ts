@@ -9,7 +9,6 @@ export async function checkCardMatch(req: Request, res: Response) {
             return res.status(400).json({ message: 'Invalid cardIds or missing gameId' });
         }
 
-        // Fetch cards by clientCardId
         const cards = await prisma.card.findMany({
             where: {
                 gameId,
