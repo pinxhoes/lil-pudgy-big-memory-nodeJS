@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   webpack(config) {
     config.resolve.alias = {
       ...(config.resolve.alias || {}),
-      '@providers': path.resolve(__dirname, 'src/app/providers'), // ✅ add this
+      '@providers': path.resolve(__dirname, 'src/app/providers'),
     };
     return config;
   },
@@ -29,7 +29,7 @@ const nextConfig: NextConfig = {
             key: 'Content-Security-Policy',
             value: `
               default-src 'self';
-              connect-src 'self' https://api.stoopid.world https://auth.privy.io https://explorer-api.walletconnect.com wss://relay.walletconnect.org https://api.mainnet.abs.xyz;
+              connect-src 'self' http://localhost:4000 https://api.stoopid.world https://auth.privy.io https://explorer-api.walletconnect.com wss://relay.walletconnect.org https://api.mainnet.abs.xyz;
               frame-src https://*.privy.io;
               script-src 'self' 'unsafe-inline' ${isDev ? "'unsafe-eval'" : ''};
               style-src 'self' 'unsafe-inline';

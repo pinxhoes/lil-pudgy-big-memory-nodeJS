@@ -31,6 +31,8 @@ export default function GameBoardSolo({
     const [loading, setLoading] = useState(false);
     const [gameOver, setGameOver] = useState(false);
     const [turnTrigger, setTurnTrigger] = useState(0);
+    const [gameId, setGameId] = useState<string | null>(null);
+
 
     useEffect(() => {
         const fetchSoloDeck = async () => {
@@ -42,8 +44,9 @@ export default function GameBoardSolo({
                     body: JSON.stringify({ gridSize }),
                 });
                 const data = await res.json();
-                if (res.ok && data.cards) {
-                    setCards(data.cards); // IDs are UUIDs now
+                if (res.ok && data.cards && data.gameId) {
+                    setCards(data.cards);
+                    setGameId(data.gameId);
                 } else {
                     console.error('[SOLO Deck Error]', data);
                 }
@@ -82,7 +85,7 @@ export default function GameBoardSolo({
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/card/reveal`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ cardId }),
+                body: JSON.stringify({ cardId, gameId }),
             });
 
             if (res.ok) {
@@ -92,7 +95,7 @@ export default function GameBoardSolo({
                 setFlippedCards((prev) => [...prev, cardId]);
             }
         },
-        [disabled, flippedCards, matchedCards]
+        [disabled, flippedCards, matchedCards, gameId]
     );
 
     useEffect(() => {
@@ -104,7 +107,7 @@ export default function GameBoardSolo({
                 const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/card/checkMatch`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cardIds: [id1, id2] }),
+                    body: JSON.stringify({ cardIds: [id1, id2], gameId }),
                 });
 
                 const result = await res.json();
@@ -146,7 +149,7 @@ export default function GameBoardSolo({
 
             setTimeout(evaluate, 300);
         }
-    }, [flippedCards, currentPlayer]);
+    }, [flippedCards, currentPlayer, gameId]);
 
     useEffect(() => {
         if (currentPlayer !== 'computer') return;
@@ -169,7 +172,23 @@ export default function GameBoardSolo({
     }, [turnTrigger, currentPlayer, flippedCards, disabled, matchedCards, cards, handleFlip]);
 
     useEffect(() => {
-        if (matchedCards.size === cards.length && cards.length > 0) setGameOver(true);
+        if (matchedCards.size === cards.length && cards.length > 0) {
+            setGameOver(true);
+
+            // 🔥 Trigger backend cleanup
+            setTimeout(() => {
+                fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/cleanup/solo`, {
+                    method: 'POST',
+                }).then(res => {
+                    if (!res.ok) throw new Error('Cleanup failed');
+                    return res.json();
+                }).then(data => {
+                    console.log('[Cleanup Success]', data);
+                }).catch(err => {
+                    console.error('[Cleanup Error]', err);
+                });
+            }, 500); // delay for dramatic flair
+        }
     }, [matchedCards, cards]);
 
     const getStatus = () => {

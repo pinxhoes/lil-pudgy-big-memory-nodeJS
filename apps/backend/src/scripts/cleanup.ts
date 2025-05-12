@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { prisma } from '../src/lib/db';
+import { prisma } from '../lib/db';
 
 async function main() {
     let totalDeleted = 0;
@@ -71,8 +71,31 @@ async function main() {
         }
     }
 
+
+
     console.log(`✅ Deleted ${deduplicatedCount} duplicate timetrial scores.`);
     totalDeleted += deduplicatedCount;
+
+    // 5. Delete all the Solo Games after it finished
+    const allSoloGames = await prisma.game.findMany({
+        where: { mode: 'solo' },
+        select: { id: true },
+    });
+
+    const soloGameIds = allSoloGames.map((g) => g.id);
+
+    const deletedCards = await prisma.card.deleteMany({
+        where: { gameId: { in: soloGameIds } },
+    });
+
+    const deletedGames = await prisma.game.deleteMany({
+        where: { id: { in: soloGameIds } },
+    });
+
+    console.log(`🔥 Deleted ${deletedCards.count} solo cards and ${deletedGames.count} solo games`);
+    totalDeleted += deletedGames.count;
+
+    console.log(`✨ Total games cleaned: ${totalDeleted}`);
 }
 
 main().catch((e) => {
