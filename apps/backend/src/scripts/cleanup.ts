@@ -1,3 +1,4 @@
+import type { Game, User } from '@prisma/client';
 import 'dotenv/config';
 import { prisma } from '../lib/db';
 
@@ -42,12 +43,11 @@ async function main() {
     console.log(`✨ Total cleaned up: ${totalDeleted} games.`);
 
     // 4. 🏆 Keep only best timetrial game (lowest durationMs) per user
-    const allUsers = await prisma.user.findMany();
-
+    const allUsers: User[] = await prisma.user.findMany();
     let deduplicatedCount = 0;
 
     for (const user of allUsers) {
-        const games = await prisma.game.findMany({
+        const games: Game[] = await prisma.game.findMany({
             where: {
                 mode: 'timetrial',
                 userId: user.id,
@@ -63,7 +63,7 @@ async function main() {
 
             const deleted = await prisma.game.deleteMany({
                 where: {
-                    id: { in: rest.map(g => g.id) },
+                    id: { in: rest.map((g: Game) => g.id) },
                 },
             });
 
@@ -71,18 +71,16 @@ async function main() {
         }
     }
 
-
-
     console.log(`✅ Deleted ${deduplicatedCount} duplicate timetrial scores.`);
     totalDeleted += deduplicatedCount;
 
     // 5. Delete all the Solo Games after it finished
-    const allSoloGames = await prisma.game.findMany({
+    const allSoloGames: { id: string }[] = await prisma.game.findMany({
         where: { mode: 'solo' },
         select: { id: true },
     });
 
-    const soloGameIds = allSoloGames.map((g) => g.id);
+    const soloGameIds: string[] = allSoloGames.map((g) => g.id);
 
     const deletedCards = await prisma.card.deleteMany({
         where: { gameId: { in: soloGameIds } },
